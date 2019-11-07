@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+   >
+    <!--背景图和上面的文字-->
+    <FrameLayout
+        android:id="@+id/frame_layout_img"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        >
+
+        <ImageView
+            android:id="@+id/list_item_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/test" />
+
+        <TextView
+            android:id="@+id/text_view_img_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:textColor="@android:color/white"
+            android:text="只剩" />
+
+        <TextView
+            android:id="@+id/text_view_img_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="3天" />
+    </FrameLayout>
+
+    <!--图片右边的三个信息框-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_toRightOf="@+id/frame_layout_img"
+        android:layout_toEndOf="@+id/frame_layout_img"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/text_view_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:text="标题标题"
+             />
+
+        <TextView
+            android:id="@+id/text_view_one_day"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:textSize="15sp"
+            android:text="2019年11月7日" />
+
+        <TextView
+            android:id="@+id/text_view_remarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:textSize="10sp"
+            android:text="备注备注"
+            tools:ignore="SmallSp" />
+    </LinearLayout>
+
+</RelativeLayout>
