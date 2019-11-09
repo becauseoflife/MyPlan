@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <ImageView
+        android:id="@+id/view_item_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        tools:srcCompat="@tools:sample/backgrounds/scenic[9]"
+        android:scaleType="centerCrop"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/view_item_title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="25sp"
+            android:textColor="@color/view_item_title"
+            android:textStyle="bold"
+            android:text="标题标题" />
+
+        <TextView
+            android:id="@+id/view_item_date_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view_item_title_text_view"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:textColor="@color/view_item_title"
+            android:textStyle="normal"
+            android:text="2019年11月7日" />
+
+        <TextView
+            android:id="@+id/view_item_remarks_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:layout_below="@+id/view_item_date_text_view"
+            android:layout_centerHorizontal="true"
+            android:textSize="23sp"
+            android:textColor="@color/view_item_title"
+            android:textStyle="bold"
+            android:text="2天14小时58分钟7秒" />
+    </RelativeLayout>
+
+
+</FrameLayout>

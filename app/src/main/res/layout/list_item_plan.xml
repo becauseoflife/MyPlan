@@ -3,51 +3,59 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+    android:layout_height="80dp"
+    android:paddingBottom="2dp"
+    android:background="@drawable/list_item_style"
+    android:id="@+id/list_item_layout"
+
    >
+
     <!--背景图和上面的文字-->
     <FrameLayout
         android:id="@+id/frame_layout_img"
-        android:layout_width="120dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         >
 
         <ImageView
             android:id="@+id/list_item_image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/test" />
+            android:scaleType="fitXY"
+            />
 
         <TextView
-            android:id="@+id/text_view_img_tip"
+            android:id="@+id/list_item_tip_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorPrimaryDark"
             android:text="只剩" />
 
         <TextView
-            android:id="@+id/text_view_img_time"
+            android:id="@+id/list_item_time_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
+            android:textColor="@color/colorPrimaryDark"
             android:text="3天" />
     </FrameLayout>
 
     <!--图片右边的三个信息框-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:layout_toRightOf="@+id/frame_layout_img"
         android:layout_toEndOf="@+id/frame_layout_img"
+        android:layout_marginRight="10dp"
         android:orientation="vertical"
-        >
+        android:layout_marginEnd="5dp"
+        android:background="#FFFFFF">
 
         <TextView
-            android:id="@+id/text_view_title"
+            android:id="@+id/list_item_title_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -55,28 +63,36 @@
             android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:textSize="20sp"
+            android:textColor="@color/list_item_title"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:text="标题标题"
+
              />
 
         <TextView
-            android:id="@+id/text_view_one_day"
+            android:id="@+id/list_item_date_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:textSize="15sp"
+            android:textColor="@color/list_item_date"
             android:text="2019年11月7日" />
 
         <TextView
-            android:id="@+id/text_view_remarks"
+            android:id="@+id/list_item_remarks_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
-            android:textSize="10sp"
+            android:textSize="12sp"
+            android:textColor="@color/list_item_remarks"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:text="备注备注"
             tools:ignore="SmallSp" />
     </LinearLayout>
