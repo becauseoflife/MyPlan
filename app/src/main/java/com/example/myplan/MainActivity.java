@@ -3,6 +3,7 @@ package com.example.myplan;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
@@ -12,19 +13,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.myplan.data.Plan;
+import com.example.myplan.data.model.Plan;
+import com.example.myplan.data.PlanFragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
+
 public class MainActivity extends AppCompatActivity {
     private ViewPager homeViewPager;
+    private LinearLayout homeViewPoints;
     private ListView homeListView;
     private ArrayList<Plan> myPlan;
     @Override
@@ -35,9 +40,18 @@ public class MainActivity extends AppCompatActivity {
         initData();
 
         // 显示倒计时轮播图
+        PlanFragmentPagerAdapter myPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
+        myPagerAdapter.setPlanArrayList(myPlan);
 
         homeViewPager = findViewById(R.id.home_view_pager);
+        homeViewPager.setAdapter(myPagerAdapter);
 
+        // 轮播图的小圆点
+        homeViewPoints = findViewById(R.id.home_select_points);
+        setPoints();
+
+        // 页面改变时监听事件
+        homeViewPager.addOnPageChangeListener(new myOnPageChangeListener());
 
         // 显示倒计时列表菜单
         PlansArrayAdapter theAdapter = new PlansArrayAdapter(this, R.layout.list_item_plan, myPlan);
@@ -48,13 +62,38 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    // 创建滑动界面的小圆点数
+    private void setPoints() {
+        for (int i = 0; i < myPlan.size(); i++)
+        {
+            View view = new View(MainActivity.this);
+            view.setBackgroundResource(R.drawable.point_selector);
+            if (i == 0)
+                view.setEnabled(true);      // 第一个默认选中
+            else
+                view.setEnabled(false);
+
+            // 设置宽高
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(30, 30);
+            // 设置间隔
+            if (i != 0)
+                layoutParams.leftMargin = 15;
+
+            // 添加到LinearLayout中
+            homeViewPoints.addView(view, layoutParams);
+        }
+    }
+
     // 初始化数据
     private void initData() {
         myPlan = new ArrayList<>();
         myPlan.add(new Plan("标题1","备注1",R.drawable.test4,1,1,1998,11,20,9,50,15));
         myPlan.add(new Plan("标题2","备注2",R.drawable.test2,1,1,2000,11,20,9,50,15));
         myPlan.add(new Plan("标题3","备注3",R.drawable.test3,1,1,2002,11,20,9,50,15));
+        myPlan.add(new Plan("标题4","备注4",R.drawable.test,1,1,2002,11,20,9,50,15));
     }
+
     // 主页显示item适配器
     private class PlansArrayAdapter extends ArrayAdapter<Plan> {
         private int resourceId;
@@ -97,5 +136,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    // 监听滑动
+    private class myOnPageChangeListener implements ViewPager.OnPageChangeListener {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        private int lastPosition = 0;
+        @Override
+        public void onPageSelected(int position) {
+            homeViewPoints.getChildAt(lastPosition).setEnabled(false);
+            homeViewPoints.getChildAt(position).setEnabled(true);
+            lastPosition = position;
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
     }
 }

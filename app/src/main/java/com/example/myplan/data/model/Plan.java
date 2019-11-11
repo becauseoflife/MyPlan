@@ -1,4 +1,4 @@
-package com.example.myplan.data;
+package com.example.myplan.data.model;
 
 public class Plan {
     private String title;       // 标题
