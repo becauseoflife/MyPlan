@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:shape="rectangle">
-
+    <!--主页listView的item的边缘背景-->
     <item>
         <shape>
             <solid android:color="#AAA"/>

@@ -8,6 +8,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.example.myplan.data.model.Plan;
 import com.example.myplan.data.PlanFragmentPagerAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +30,10 @@ import java.util.List;
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
 
 public class MainActivity extends AppCompatActivity {
-    private ViewPager homeViewPager;
-    private LinearLayout homeViewPoints;
-    private ListView homeListView;
+    private ViewPager homeViewPager;        // 主页轮播图控件
+    private LinearLayout homeViewPoints;    // 主页导航小圆点控件
+    private ListView homeListView;          // 主页Plan列表控件
+    private FloatingActionButton homeFABtn; // 主页悬浮按钮控件
     private ArrayList<Plan> myPlan;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
         // 轮播图的小圆点
         homeViewPoints = findViewById(R.id.home_select_points);
         setPoints();
-
-        // 页面改变时监听事件
+        // 页面改变时改变导航小圆点的监听事件
         homeViewPager.addOnPageChangeListener(new myOnPageChangeListener());
 
         // 显示倒计时列表菜单
@@ -58,8 +60,15 @@ public class MainActivity extends AppCompatActivity {
         homeListView = findViewById(R.id.home_list_view);
         homeListView.setAdapter(theAdapter);
 
-        // 点击新建按钮
-
+        // 点击新建的悬浮按钮
+        homeFABtn = findViewById(R.id.home_add_btn);
+        homeFABtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddPlanActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 

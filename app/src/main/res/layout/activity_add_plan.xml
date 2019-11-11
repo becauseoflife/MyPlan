@@ -14,7 +14,6 @@
         android:background="?attr/colorPrimaryDark"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/add_plan_back"
-        app:title="editor"
         app:titleTextColor="@android:color/white"
         tools:ignore="MissingConstraints"
         />
@@ -26,17 +25,24 @@
         android:layout_height="200dp"
         android:layout_below="@+id/add_plan_toolbar"
         android:orientation="vertical"
+        android:background="@color/colorPrimaryDark"
 
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         >
 
         <TextView
             android:id="@+id/add_plan_title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+
+            android:textSize="16sp"
             android:text="@string/add_plan_title"
-            android:layout_marginStart="40dp" />
+            android:textColor="@color/add_plan_text_color"
+             />
 
         <EditText
             android:id="@+id/add_plan_title_edit_text"
@@ -44,13 +50,20 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
+            android:layout_marginStart="40dp"
+
             android:layout_below="@+id/add_plan_title_text_view"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="@string/add_plan_title_tip_text"
             android:importantForAutofill="no"
             tools:ignore="LabelFor"
-            android:layout_marginStart="40dp" />
+
+            android:textSize="20sp"
+            android:hint="@string/add_plan_title_tip_text"
+            android:textColorHint="@color/add_plan_text_color"
+            android:textColor="@color/add_plan_text_color"
+
+             />
 
         <TextView
             android:id="@+id/add_plan_remarks_text_view"
@@ -58,9 +71,13 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
+            android:layout_marginStart="40dp"
             android:layout_below="@+id/add_plan_title_edit_text"
+
+            android:textSize="16sp"
             android:text="@string/add_plan_remarks"
-            android:layout_marginStart="40dp" />
+            android:textColor="@color/add_plan_text_color"
+             />
 
         <EditText
             android:id="@+id/add_plan_remarks_edit_text"
@@ -68,13 +85,19 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
+            android:layout_marginStart="40dp"
+
             android:layout_below="@+id/add_plan_remarks_text_view"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="@string/add_plan_remark_tip_text"
             android:importantForAutofill="no"
             tools:ignore="LabelFor"
-            android:layout_marginStart="40dp" />
+
+            android:textSize="20sp"
+            android:hint="@string/add_plan_remark_tip_text"
+            android:textColorHint="@color/add_plan_text_color"
+            android:textColor="@color/add_plan_text_color"
+             />
 
     </RelativeLayout>
 
