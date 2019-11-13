@@ -3,7 +3,6 @@ package com.example.myplan;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         PlanFragmentPagerAdapter myPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
         myPagerAdapter.setPlanArrayList(myPlan);
 
-        homeViewPager = findViewById(R.id.home_view_pager);
+        homeViewPager = findViewById(R.id.home_viewPager);
         homeViewPager.setAdapter(myPagerAdapter);
 
         // 轮播图的小圆点
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 显示倒计时列表菜单
         PlansArrayAdapter theAdapter = new PlansArrayAdapter(this, R.layout.list_item_plan, myPlan);
-        homeListView = findViewById(R.id.home_list_view);
+        homeListView = findViewById(R.id.home_listView);
         homeListView.setAdapter(theAdapter);
 
         // 点击新建的悬浮按钮
@@ -97,10 +96,10 @@ public class MainActivity extends AppCompatActivity {
     // 初始化数据
     private void initData() {
         myPlan = new ArrayList<>();
-        myPlan.add(new Plan("标题1","备注1",R.drawable.test4,1,1,1998,11,20,9,50,15));
+        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,1,1,1998,11,20,9,50,15));
         myPlan.add(new Plan("标题2","备注2",R.drawable.test2,1,1,2000,11,20,9,50,15));
         myPlan.add(new Plan("标题3","备注3",R.drawable.test3,1,1,2002,11,20,9,50,15));
-        myPlan.add(new Plan("标题4","备注4",R.drawable.test,1,1,2002,11,20,9,50,15));
+        myPlan.add(new Plan("标题4","备注4",R.drawable.test4,1,1,2002,11,20,9,50,15));
     }
 
     // 主页显示item适配器
@@ -119,12 +118,12 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("ViewHolder") View item = layoutInflater.inflate(resourceId, null);
 
             RelativeLayout relativeLayout = item.findViewById(R.id.list_item_layout);
-            ImageView bgImg = item.findViewById(R.id.list_item_image_view);          // 背景图
-            TextView tip = item.findViewById(R.id.list_item_tip_text_view);          // 显示剩余或者过去
-            TextView time = item.findViewById(R.id.list_item_time_text_view);        // 剩余或者过去的天数
-            TextView title = item.findViewById(R.id.list_item_title_text_view);      // 标题
-            TextView date = item.findViewById(R.id.list_item_date_text_view);        // 日期
-            TextView remarks = item.findViewById(R.id.list_item_remarks_text_view);  // 备注
+            ImageView bgImg = item.findViewById(R.id.list_item_imageView);          // 背景图
+            TextView tip = item.findViewById(R.id.list_item_tip_textView);          // 显示剩余或者过去
+            TextView time = item.findViewById(R.id.list_item_time_textView);        // 剩余或者过去的天数
+            TextView title = item.findViewById(R.id.list_item_title_textView);      // 标题
+            TextView date = item.findViewById(R.id.list_item_date_textView);        // 日期
+            TextView remarks = item.findViewById(R.id.list_item_remarks_textView);  // 备注
 
             Plan plan_item = this.getItem(position);    // 获得一个plan
 

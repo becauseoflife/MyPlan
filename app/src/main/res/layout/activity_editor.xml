@@ -8,7 +8,7 @@
     >
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/add_plan_toolbar"
+        android:id="@+id/add_plan_toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimaryDark"
@@ -24,13 +24,13 @@
         android:id="@+id/add_plan_bgimg"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_below="@+id/add_plan_toolbar"
+        android:layout_below="@+id/add_plan_toolBar"
         android:orientation="vertical"
 
         >
 
         <TextView
-            android:id="@+id/add_plan_title_text_view"
+            android:id="@+id/add_plan_title_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -39,12 +39,12 @@
             android:layout_marginStart="40dp" />
 
         <EditText
-            android:id="@+id/add_plan_title_edit_text"
+            android:id="@+id/add_plan_title_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/add_plan_title_text_view"
+            android:layout_below="@+id/add_plan_title_textView"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="@string/add_plan_title_tip_text"
@@ -53,22 +53,22 @@
             android:layout_marginStart="40dp" />
 
         <TextView
-            android:id="@+id/add_plan_remarks_text_view"
+            android:id="@+id/add_plan_remarks_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/add_plan_title_edit_text"
+            android:layout_below="@+id/add_plan_title_editText"
             android:text="@string/add_plan_remarks"
             android:layout_marginStart="40dp" />
 
         <EditText
-            android:id="@+id/add_plan_remarks_edit_text"
+            android:id="@+id/add_plan_remarks_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/add_plan_remarks_text_view"
+            android:layout_below="@+id/add_plan_remarks_textView"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="@string/add_plan_remark_tip_text"
@@ -79,7 +79,7 @@
     </RelativeLayout>
 
     <ListView
-        android:id="@+id/add_plan_menu_list_view"
+        android:id="@+id/add_plan_menu_listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/add_plan_bgimg"
