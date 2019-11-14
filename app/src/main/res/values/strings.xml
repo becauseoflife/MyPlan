@@ -11,5 +11,6 @@
     <!-- menu中的文本 -->
     <string name="add_plan_toolbar_menu_ok">OK</string>
 
-
+    <!-- AddPlanActivity -->
+    <string name="tipInputText">MyPlan:标题不能为空</string>
 </resources>

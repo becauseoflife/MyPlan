@@ -1,11 +1,15 @@
 package com.example.myplan.data.model;
 
-public class Plan {
-    private String title;       // 标题
-    private String remarks;     // 备注信息
-    private int backgroundImg;  // 背景图
-    private int label;          // 标签
-    private int cycleTime;      // 重复设置
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class Plan implements Serializable {
+    private static final long serialVersionUID=1L;
+    private String title;                // 标题
+    private String remarks;              // 备注信息
+    private int backgroundImg;           // 背景图
+    private ArrayList<String> label;     // 标签
+    private int cycleTime;               // 重复设置
 
     private int year;       // 年
     private int month;      // 月
@@ -14,8 +18,9 @@ public class Plan {
     private int minute;     // 分
     private int second;     // 秒
 
+    public Plan() {}
 
-    public Plan(String title, String remarks, int backgroundImg, int label, int cycleTime, int year, int month, int day, int hour, int minute, int second) {
+    public Plan(String title, String remarks, int backgroundImg, ArrayList<String> label, int cycleTime, int year, int month, int day, int hour, int minute, int second) {
         this.title = title;
         this.remarks = remarks;
         this.backgroundImg = backgroundImg;
@@ -54,11 +59,11 @@ public class Plan {
         this.backgroundImg = backgroundImg;
     }
 
-    public int getLabel() {
+    public ArrayList<String> getLabel() {
         return label;
     }
 
-    public void setLabel(int label) {
+    public void setLabel(ArrayList<String> label) {
         this.label = label;
     }
 

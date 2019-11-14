@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myplan.data.model.Plan;
 import com.example.myplan.data.PlanFragmentPagerAdapter;
@@ -26,14 +28,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
+
 
 public class MainActivity extends AppCompatActivity {
+    public static final int REQUEST_CODE_ADD_NEW_PLAN = 901;
+
     private ViewPager homeViewPager;        // 主页轮播图控件
     private LinearLayout homeViewPoints;    // 主页导航小圆点控件
     private ListView homeListView;          // 主页Plan列表控件
     private FloatingActionButton homeFABtn; // 主页悬浮按钮控件
     private ArrayList<Plan> myPlan;
+    private PlansArrayAdapter thePlansListAdapter;
+    private PlanFragmentPagerAdapter thePlansPagerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,22 +50,22 @@ public class MainActivity extends AppCompatActivity {
         initData();
 
         // 显示倒计时轮播图
-        PlanFragmentPagerAdapter myPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
-        myPagerAdapter.setPlanArrayList(myPlan);
+        //thePlansPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
+        //thePlansPagerAdapter.setPlanArrayList(myPlan);
 
-        homeViewPager = findViewById(R.id.home_viewPager);
-        homeViewPager.setAdapter(myPagerAdapter);
+        //homeViewPager = findViewById(R.id.home_viewPager);
+        //homeViewPager.setAdapter(thePlansPagerAdapter);
 
         // 轮播图的小圆点
-        homeViewPoints = findViewById(R.id.home_select_points);
-        setPoints();
+        //homeViewPoints = findViewById(R.id.home_select_points);
+        //setPoints();
         // 页面改变时改变导航小圆点的监听事件
-        homeViewPager.addOnPageChangeListener(new myOnPageChangeListener());
+       // homeViewPager.addOnPageChangeListener(new myOnPageChangeListener());
 
         // 显示倒计时列表菜单
-        PlansArrayAdapter theAdapter = new PlansArrayAdapter(this, R.layout.list_item_plan, myPlan);
+        thePlansListAdapter = new PlansArrayAdapter(this, R.layout.list_item_plan, myPlan);
         homeListView = findViewById(R.id.home_listView);
-        homeListView.setAdapter(theAdapter);
+        homeListView.setAdapter(thePlansListAdapter);
 
         // 点击新建的悬浮按钮
         homeFABtn = findViewById(R.id.home_add_btn);
@@ -65,10 +73,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddPlanActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_ADD_NEW_PLAN);
             }
         });
 
+    }
+
+    // 获得传回的数据
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode)
+        {
+            case REQUEST_CODE_ADD_NEW_PLAN:
+                if (resultCode == RESULT_OK)
+                {
+                    Plan newPlan = (Plan) data.getSerializableExtra("newPlan");
+                    Log.i("myTest", newPlan.getTitle());
+
+                    myPlan.add(newPlan);
+                    thePlansListAdapter.notifyDataSetChanged();
+
+
+                    Toast.makeText(MainActivity.this, "新建成功", Toast.LENGTH_SHORT).show();
+                }
+            break;
+        }
     }
 
     // 创建滑动界面的小圆点数
@@ -96,10 +126,11 @@ public class MainActivity extends AppCompatActivity {
     // 初始化数据
     private void initData() {
         myPlan = new ArrayList<>();
-        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,1,1,1998,11,20,9,50,15));
-        myPlan.add(new Plan("标题2","备注2",R.drawable.test2,1,1,2000,11,20,9,50,15));
-        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,1,1,2002,11,20,9,50,15));
-        myPlan.add(new Plan("标题4","备注4",R.drawable.test4,1,1,2002,11,20,9,50,15));
+        ArrayList<String> lable = new ArrayList<>();
+        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,lable,1,1998,11,20,9,50,15));
+        myPlan.add(new Plan("标题2","备注2",R.drawable.test2,lable,1,2000,11,20,9,50,15));
+        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,lable,1,2002,11,20,9,50,15));
+        myPlan.add(new Plan("标题4","备注4",R.drawable.test4,lable,1,2002,11,20,9,50,15));
     }
 
     // 主页显示item适配器
