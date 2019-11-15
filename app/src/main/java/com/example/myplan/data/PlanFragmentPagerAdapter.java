@@ -1,10 +1,15 @@
 package com.example.myplan.data;
 
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.example.myplan.R;
 import com.example.myplan.ViewPlanFragment;
 import com.example.myplan.data.model.Plan;
 
@@ -17,6 +22,7 @@ public class PlanFragmentPagerAdapter extends FragmentPagerAdapter {
     public PlanFragmentPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
     }
+
 
     public void setPlanArrayList(ArrayList<Plan> planArrayList) {
         this.planArrayList = planArrayList;

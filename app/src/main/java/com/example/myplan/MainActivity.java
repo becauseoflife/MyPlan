@@ -9,7 +9,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,17 +49,17 @@ public class MainActivity extends AppCompatActivity {
         initData();
 
         // 显示倒计时轮播图
-        //thePlansPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
-        //thePlansPagerAdapter.setPlanArrayList(myPlan);
+        thePlansPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
+        thePlansPagerAdapter.setPlanArrayList(myPlan);
 
-        //homeViewPager = findViewById(R.id.home_viewPager);
-        //homeViewPager.setAdapter(thePlansPagerAdapter);
+        homeViewPager = findViewById(R.id.home_viewPager);
+        homeViewPager.setAdapter(thePlansPagerAdapter);
 
         // 轮播图的小圆点
-        //homeViewPoints = findViewById(R.id.home_select_points);
-        //setPoints();
+        homeViewPoints = findViewById(R.id.home_select_points);
+        setPoints();
         // 页面改变时改变导航小圆点的监听事件
-       // homeViewPager.addOnPageChangeListener(new myOnPageChangeListener());
+       homeViewPager.addOnPageChangeListener(new myOnPageChangeListener());
 
         // 显示倒计时列表菜单
         thePlansListAdapter = new PlansArrayAdapter(this, R.layout.list_item_plan, myPlan);
@@ -89,11 +88,14 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK)
                 {
                     Plan newPlan = (Plan) data.getSerializableExtra("newPlan");
-                    Log.i("myTest", newPlan.getTitle());
-
+                    // 更新列表
                     myPlan.add(newPlan);
                     thePlansListAdapter.notifyDataSetChanged();
-
+                    // 更新轮播列表
+                    thePlansPagerAdapter.setPlanArrayList(myPlan);
+                    thePlansPagerAdapter.notifyDataSetChanged();
+                    // 添加一个导航小圆点
+                    addPoint();
 
                     Toast.makeText(MainActivity.this, "新建成功", Toast.LENGTH_SHORT).show();
                 }
@@ -121,6 +123,19 @@ public class MainActivity extends AppCompatActivity {
             // 添加到LinearLayout中
             homeViewPoints.addView(view, layoutParams);
         }
+    }
+
+    private void addPoint()
+    {
+        View view = new View(MainActivity.this);
+        view.setBackgroundResource(R.drawable.point_selector);
+        view.setEnabled(false);
+        // 设置宽高
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(30, 30);
+        // 设置间隔
+        layoutParams.leftMargin = 15;
+        // 添加到LinearLayout中
+        homeViewPoints.addView(view, layoutParams);
     }
 
     // 初始化数据

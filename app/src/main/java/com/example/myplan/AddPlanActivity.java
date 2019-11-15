@@ -125,7 +125,6 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
             // 数据传回主界面
             Intent intent = new Intent(AddPlanActivity.this, MainActivity.class);
             intent.putExtra("newPlan", newPlan);
-            Log.i("myTest", newPlan.getRemarks() + newPlan.getLabel());
             setResult(RESULT_OK, intent);
 
             // 销毁界面
@@ -189,6 +188,10 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     // 获得用户选择的日期的函数
     @Override
     public void onDateSet(DatePickerDialog view, int selectYear, int selectMonthOfYear, int selectDayOfMonth) {
+
+        /* 创建用户选择时间界面 */
+        showDialogForSelectTime();
+
         /* 设置选择后的日期，并在菜单下方显示选择的日期 */
         mYear = selectYear;
         mMonth = selectMonthOfYear;
@@ -199,8 +202,6 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
 
         /* 更新菜单，显示用户选择的日期 */
         menuAdapter.notifyDataSetChanged();
-        /* 创建用户选择时间界面 */
-        showDialogForSelectTime();
     }
 
     // 获得用户选择的时间的函数
@@ -244,7 +245,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
                 // 选择标签
                 case MENU_SELECT_LABEL:{
                     showDialogSelectLabel();
-                    Toast.makeText(AddPlanActivity.this, "选择标签", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(AddPlanActivity.this, "选择标签", Toast.LENGTH_SHORT).show();
                     break;
                 }
             }
@@ -386,11 +387,23 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         ArrayList<String> checkLabel = new ArrayList<>();
         String[] items = {"生日", "纪念日", "工作", "考试"};
         boolean[] initChoiceItems = {false, false, false, false};
+        // 当再次点击时，还原上次设置 （先用着比较愚蠢的办法（猝死...））
+        for (int i=0; i<label.size(); i++)
+        {
+            for (int j=0; j<items.length; j++)
+                if (label.get(i).equals(items[j]))
+                {
+                    initChoiceItems[j] = true;
+                    checkLabel.add(items[j]);
+                }
+        }
 
         AlertDialog.Builder multiChoiceDialog = new AlertDialog.Builder(AddPlanActivity.this);
         multiChoiceDialog.setMultiChoiceItems(items, initChoiceItems, (DialogInterface.OnMultiChoiceClickListener) (dialogInterface, i, isCheck) -> {
             if (isCheck){
                 checkLabel.add(items[i]);
+            }else{
+                checkLabel.remove(items[i]);
             }
         });
 
@@ -398,6 +411,15 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
             dialogInterface.dismiss();
         });
         multiChoiceDialog.setPositiveButton("确定", (dialogInterface, i) -> {
+            // 更新菜单显示
+            Map<String, Object> newRepeatMap = menuList.get(MENU_SELECT_LABEL);
+            String labelStr = "";
+            for (int index=0; index<checkLabel.size(); index++){
+                labelStr += checkLabel.get(index) + " ";
+            }
+            newRepeatMap.put("menu_tip", labelStr);
+            menuAdapter.notifyDataSetChanged();
+
             label = checkLabel;
         });
 
