@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.example.myplan.data.model.Plan;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,6 +51,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     private int cycleTime;
     private int img;
     private ArrayList<String> label;
+    private String week;
 
     private Toolbar toolbar;
     private ListView menuListView;
@@ -121,6 +125,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
             newPlan.setHour(mHour);
             newPlan.setMinute(mMinute);
             newPlan.setSecond(mSecond);
+            newPlan.setWeek(week);
 
             // 数据传回主界面
             Intent intent = new Intent(AddPlanActivity.this, MainActivity.class);
@@ -139,13 +144,22 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
 
         Calendar calendar =Calendar.getInstance();
         calendar.setTime(date);
+        /* 年月日默认为添加的时间 */
         mYear = calendar.get(Calendar.YEAR);
-        mMonth = calendar.get(Calendar.MONTH);
+        mMonth = calendar.get(Calendar.MONTH) + 1;
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        mHour = calendar.get(Calendar.HOUR_OF_DAY);
-        mMinute = calendar.get(Calendar.MINUTE);
-        mSecond = calendar.get(Calendar.SECOND);
+        /* 时分秒默认为0 */
+        mHour = 0;
+        mMinute = 0;
+        mSecond = 0;
 
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E");
+        Date weekDate = new Date(System.currentTimeMillis());
+        week = simpleDateFormat.format(weekDate);
+
+        Log.i("week", week);
+
+        /* 其他的属性默认值 */
         cycleTime = 0;
         img = R.drawable.test3;
         label = new ArrayList<>();
@@ -186,6 +200,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     }
 
     // 获得用户选择的日期的函数
+    @SuppressLint("SimpleDateFormat")
     @Override
     public void onDateSet(DatePickerDialog view, int selectYear, int selectMonthOfYear, int selectDayOfMonth) {
 
@@ -194,7 +209,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
 
         /* 设置选择后的日期，并在菜单下方显示选择的日期 */
         mYear = selectYear;
-        mMonth = selectMonthOfYear;
+        mMonth = selectMonthOfYear + 1;
         mDay = selectDayOfMonth;
         Map<String, Object> newDateMap = menuList.get(MENU_SELECT_TIME);
         String dateStr = mYear + "年" + mMonth + "月" + mDay + "日";
@@ -202,6 +217,16 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
 
         /* 更新菜单，显示用户选择的日期 */
         menuAdapter.notifyDataSetChanged();
+
+        /* 获得星期 */
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        try {
+            Date weekDate = simpleDateFormat.parse(dateStr);
+            simpleDateFormat = new SimpleDateFormat("E");
+            week = simpleDateFormat.format(weekDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     // 获得用户选择的时间的函数
@@ -259,7 +284,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
          * 时间日期选择器                                                                      *
          * https://github.com/wdullaer/MaterialDateTimePicker#using-material-datetime-pickers *
          **/
-         DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(AddPlanActivity.this, mYear, mMonth, mDay);
+         DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(AddPlanActivity.this, mYear, mMonth-1, mDay);
          datePickerDialog.setVersion(DatePickerDialog.Version.VERSION_2);
          datePickerDialog.setAccentColor(getResources().getColor(R.color.colorPrimaryDark));
          datePickerDialog.setOkText("确定");

@@ -5,13 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <ImageView
         android:id="@+id/menu_imageView"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:scaleType="center"
-        android:src="@drawable/add_plan_menu_date"
         tools:ignore="ContentDescription" />
 
     <TextView
@@ -21,10 +19,9 @@
         android:layout_toRightOf="@+id/menu_imageView"
         android:layout_toEndOf="@+id/menu_imageView"
         android:layout_marginTop="6dp"
-
         android:textColor="#000000"
         android:textSize="17sp"
-        android:text="日期"
+
         />
 
     <TextView
@@ -35,8 +32,7 @@
         android:layout_toEndOf="@+id/menu_imageView"
         android:layout_below="@+id/menu_title_textView"
         android:layout_marginTop="5dp"
-
         android:textSize="13sp"
-        android:text="长按使用日期计算器" />
+         />
 
 </RelativeLayout>

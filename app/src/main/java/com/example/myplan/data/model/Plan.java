@@ -18,9 +18,11 @@ public class Plan implements Serializable {
     private int minute;     // 分
     private int second;     // 秒
 
+    private String week;    // 星期
+
     public Plan() {}
 
-    public Plan(String title, String remarks, int backgroundImg, ArrayList<String> label, int cycleTime, int year, int month, int day, int hour, int minute, int second) {
+    public Plan(String title, String remarks, int backgroundImg, ArrayList<String> label, int cycleTime, int year, int month, int day, int hour, int minute, int second, String week) {
         this.title = title;
         this.remarks = remarks;
         this.backgroundImg = backgroundImg;
@@ -32,6 +34,7 @@ public class Plan implements Serializable {
         this.hour = hour;
         this.minute = minute;
         this.second = second;
+        this.week = week;
     }
 
 
@@ -122,5 +125,9 @@ public class Plan implements Serializable {
     public void setSecond(int second) {
         this.second = second;
     }
+
+    public String getWeek() { return week; }
+
+    public void setWeek(String week) { this.week = week; }
 
 }

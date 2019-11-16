@@ -16,14 +16,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myplan.data.GetPlanDateBetweenNow;
 import com.example.myplan.data.model.Plan;
 import com.example.myplan.data.PlanFragmentPagerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,11 +142,11 @@ public class MainActivity extends AppCompatActivity {
     // 初始化数据
     private void initData() {
         myPlan = new ArrayList<>();
-        ArrayList<String> lable = new ArrayList<>();
-        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,lable,1,1998,11,20,9,50,15));
-        myPlan.add(new Plan("标题2","备注2",R.drawable.test2,lable,1,2000,11,20,9,50,15));
-        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,lable,1,2002,11,20,9,50,15));
-        myPlan.add(new Plan("标题4","备注4",R.drawable.test4,lable,1,2002,11,20,9,50,15));
+        ArrayList<String> label = new ArrayList<>();
+        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,label,1,1998,11,20,9,50,15, "周四"));
+        myPlan.add(new Plan("标题2","备注2",R.drawable.test4,label,1,2019,11,15,9,50,15,"周五"));
+        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,label,1,2019,12,25,0,00,15,"周六"));
+        myPlan.add(new Plan("标题4","",R.drawable.test2,label,1,2021,11,20,9,50,15,"周日"));
     }
 
     // 主页显示item适配器
@@ -157,13 +158,13 @@ public class MainActivity extends AppCompatActivity {
             resourceId=resource;
         }
 
+        @SuppressLint("SetTextI18n")
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater layoutInflater = LayoutInflater.from(this.getContext());
             @SuppressLint("ViewHolder") View item = layoutInflater.inflate(resourceId, null);
 
-            RelativeLayout relativeLayout = item.findViewById(R.id.list_item_layout);
             ImageView bgImg = item.findViewById(R.id.list_item_imageView);          // 背景图
             TextView tip = item.findViewById(R.id.list_item_tip_textView);          // 显示剩余或者过去
             TextView time = item.findViewById(R.id.list_item_time_textView);        // 剩余或者过去的天数
@@ -174,10 +175,41 @@ public class MainActivity extends AppCompatActivity {
             Plan plan_item = this.getItem(position);    // 获得一个plan
 
             if (plan_item != null) {
-                //relativeLayout.setBackgroundResource(plan_item.getBackgroundImg());
+                String tipStr="";
+                long tipDay = 0;
+                String planDateStr = plan_item.getYear() + "-" + plan_item.getMonth()+ "-" + plan_item.getDay();
+
+                GetPlanDateBetweenNow getDays = new GetPlanDateBetweenNow(planDateStr, "yyyy-MM-dd");
+                try {
+                    tipDay = getDays.CalculationMillisecond(); // 获得相隔秒数
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                // 比较大小
+                if (tipDay < 0){
+                    tipStr = "已经";
+                    tipDay = Math.abs(tipDay);
+                }
+                else if (tipDay > 0){
+                    if (tipDay < 30)
+                        tipStr = "只剩";
+                    else
+                        tipStr = "还有";
+                }
+                else {
+                    tipStr = "今天";
+                }
+                // 控件上显示的信息
+                tip.setText(tipStr);
+                if (tipDay != 0){
+                    tipDay /= 24*60*60*1000;
+                    int day = (int) (tipDay-1);
+                    time.setText(day + "天");
+                }
+                else
+                    time.setVisibility(View.GONE);
+
                 bgImg.setImageResource(plan_item.getBackgroundImg());
-                tip.setText("只剩");
-                time.setText("100天");
 
                 title.setText(plan_item.getTitle());
                 String dateStr = plan_item.getYear() + "年" + plan_item.getMonth() + "月" + plan_item.getDay() + "日";
@@ -185,10 +217,8 @@ public class MainActivity extends AppCompatActivity {
                 remarks.setText(plan_item.getRemarks());
 
             }
-
             return item;
         }
-
 
     }
 
