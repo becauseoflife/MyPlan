@@ -2,6 +2,7 @@ package com.example.myplan;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -29,6 +30,8 @@ import javax.security.auth.login.LoginException;
  * A simple {@link Fragment} subclass.
  */
 public class ViewPlanFragment extends Fragment {
+
+    private static final int REQUEST_CODE_EDITOR_PLAN = 903;
 
     private Plan plan;
     public ViewPlanFragment(Plan plan) {
@@ -141,7 +144,14 @@ public class ViewPlanFragment extends Fragment {
         };
         timer.start();
 
-
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent editorIntent = new Intent(getContext(), EditorActivity.class);
+                editorIntent.putExtra("editor_plan", plan);
+                startActivityForResult(editorIntent, REQUEST_CODE_EDITOR_PLAN);
+            }
+        });
 
         return view;
     }

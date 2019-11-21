@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/full_screen_icon"
+        android:icon="@drawable/editor_toolbar_full_screen"
+        app:showAsAction="always"
+        android:title="@string/editor_menu_full_screen" />
+    <item
+        android:id="@+id/delete_icon"
+        android:icon="@drawable/editor_toolbar_delete"
+        app:showAsAction="always"
+        android:title="@string/editor_menu_delete"
+        />
+    <item
+        android:id="@+id/share_icon"
+        android:icon="@drawable/editor_toolbar_share"
+        app:showAsAction="always"
+        android:title="@string/editor_menu_share"
+        />
+    <item
+        android:id="@+id/editor_icon"
+        android:icon="@drawable/editor_toolbar_editor"
+        app:showAsAction="always"
+        android:title="@string/editor_menu_editor"
+        />
+</menu>

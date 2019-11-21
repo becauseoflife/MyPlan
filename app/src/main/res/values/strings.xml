@@ -8,9 +8,14 @@
     <string name="add_plan_remarks">备注</string>
     <string name="add_plan_remark_tip_text">想说的话,目标,格言...</string>
 
-    <!-- menu中的文本 -->
+    <!--app_plan_toolbar_menu中的文本 -->
     <string name="add_plan_toolbar_menu_ok">OK</string>
-
+    <!-- editor_toolbar_menu中的文本 -->
+    <string name="editor_menu_full_screen">全屏</string>
+    <string name="editor_menu_delete">删除</string>
+    <string name="editor_menu_share">分享</string>
+    <string name="editor_menu_editor">编辑</string>
+    <string name="editor_menu_setting">设置</string>
     <!-- AddPlanActivity -->
     <string name="tipInputText">MyPlan:标题不能为空</string>
 </resources>

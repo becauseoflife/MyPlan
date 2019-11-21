@@ -16,6 +16,7 @@
         app:navigationIcon="@drawable/add_plan_back"
         app:titleTextColor="@android:color/white"
         tools:ignore="MissingConstraints"
+        app:menu="@menu/add_plan_toolbar_menu"
         />
 
     <!-- 标题 备注 背景显示 -->

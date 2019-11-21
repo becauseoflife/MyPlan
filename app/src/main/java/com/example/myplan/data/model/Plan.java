@@ -9,7 +9,7 @@ public class Plan implements Serializable {
     private String remarks;              // 备注信息
     private int backgroundImg;           // 背景图
     private ArrayList<String> label;     // 标签
-    private int cycleTime;               // 重复设置
+    private String cycleTime;               // 重复设置
 
     private int year;       // 年
     private int month;      // 月
@@ -22,7 +22,7 @@ public class Plan implements Serializable {
 
     public Plan() {}
 
-    public Plan(String title, String remarks, int backgroundImg, ArrayList<String> label, int cycleTime, int year, int month, int day, int hour, int minute, int second, String week) {
+    public Plan(String title, String remarks, int backgroundImg, ArrayList<String> label, String cycleTime, int year, int month, int day, int hour, int minute, int second, String week) {
         this.title = title;
         this.remarks = remarks;
         this.backgroundImg = backgroundImg;
@@ -70,11 +70,11 @@ public class Plan implements Serializable {
         this.label = label;
     }
 
-    public int getCycleTime() {
+    public String getCycleTime() {
         return cycleTime;
     }
 
-    public void setCycleTime(int cycleTime) {
+    public void setCycleTime(String cycleTime) {
         this.cycleTime = cycleTime;
     }
 

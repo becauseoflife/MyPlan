@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,10 +34,11 @@ import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_SET_USER_
 
 public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_ADD_NEW_PLAN = 901;
+    public static final int REQUEST_CODE_EDITOR_PLAN = 902;
 
-    private ViewPager homeViewPager;        // 主页轮播图控件
+    private ViewPager homePlanViewPager;        // 主页轮播图控件
     private LinearLayout homeViewPoints;    // 主页导航小圆点控件
-    private ListView homeListView;          // 主页Plan列表控件
+    private ListView homePlanListView;          // 主页Plan列表控件
     private FloatingActionButton homeFABtn; // 主页悬浮按钮控件
     private ArrayList<Plan> myPlan;
     private PlansArrayAdapter thePlansListAdapter;
@@ -53,27 +55,29 @@ public class MainActivity extends AppCompatActivity {
         thePlansPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
         thePlansPagerAdapter.setPlanArrayList(myPlan);
 
-        homeViewPager = findViewById(R.id.home_viewPager);
-        homeViewPager.setAdapter(thePlansPagerAdapter);
+        homePlanViewPager = findViewById(R.id.home_viewPager);
+        homePlanViewPager.setAdapter(thePlansPagerAdapter);
 
         // 轮播图的小圆点
         homeViewPoints = findViewById(R.id.home_select_points);
         setPoints();
         // 页面改变时改变导航小圆点的监听事件
-       homeViewPager.addOnPageChangeListener(new myOnPageChangeListener());
+       homePlanViewPager.addOnPageChangeListener(new myOnPageChangeListener());
 
         // 显示倒计时列表菜单
         thePlansListAdapter = new PlansArrayAdapter(this, R.layout.list_item_plan, myPlan);
-        homeListView = findViewById(R.id.home_listView);
-        homeListView.setAdapter(thePlansListAdapter);
+        homePlanListView = findViewById(R.id.home_listView);
+        homePlanListView.setAdapter(thePlansListAdapter);
+        homePlanListView.setOnItemClickListener(new PlanItemClickListener());
 
         // 点击新建的悬浮按钮
         homeFABtn = findViewById(R.id.home_add_btn);
         homeFABtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddPlanActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_ADD_NEW_PLAN);
+                Intent NewPlanIntent = new Intent(MainActivity.this, AddPlanActivity.class);
+                NewPlanIntent.putExtra("create_new_plan",true);
+                startActivityForResult(NewPlanIntent, REQUEST_CODE_ADD_NEW_PLAN);
             }
         });
 
@@ -143,10 +147,10 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         myPlan = new ArrayList<>();
         ArrayList<String> label = new ArrayList<>();
-        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,label,1,1998,11,20,9,50,15, "周四"));
-        myPlan.add(new Plan("标题2","备注2",R.drawable.test4,label,1,2019,11,15,9,50,15,"周五"));
-        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,label,1,2019,12,25,0,00,15,"周六"));
-        myPlan.add(new Plan("标题4","",R.drawable.test2,label,1,2021,11,20,9,50,15,"周日"));
+        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,label,"",1998,11,20,9,50,15, "周四"));
+        myPlan.add(new Plan("标题2","备注2",R.drawable.test4,label,"无",2019,11,15,9,50,15,"周五"));
+        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,label,"每周",2019,12,25,0,00,15,"周六"));
+        myPlan.add(new Plan("标题4","",R.drawable.test2,label,"每年",2021,11,20,9,50,15,"周日"));
     }
 
     // 主页显示item适配器
@@ -191,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                     tipDay = Math.abs(tipDay);
                 }
                 else if (tipDay > 0){
-                    if (tipDay < 30)
+                    if ((tipDay / 24*60*60*1000) < 30)
                         tipStr = "只剩";
                     else
                         tipStr = "还有";
@@ -242,4 +246,16 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+    // Plan设置监听事件
+    private class PlanItemClickListener implements android.widget.AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            // 向编辑界面传输数据
+            Intent editorIntent = new Intent(MainActivity.this, EditorActivity.class);
+            editorIntent.putExtra("editor_plan", myPlan.get(position));
+            startActivityForResult(editorIntent, REQUEST_CODE_EDITOR_PLAN);
+        }
+    }
+
 }

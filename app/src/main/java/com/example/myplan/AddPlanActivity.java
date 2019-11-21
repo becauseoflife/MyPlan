@@ -1,9 +1,5 @@
 package com.example.myplan;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,12 +9,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.myplan.data.model.Plan;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -41,17 +40,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     private static final int MENU_SELECT_IMG = 2;       // 设置背景图
     private static final int MENU_SELECT_LABEL = 3;     // 设置标签
 
-    /* 初始化用户除标题外，其他需要的数据 */
-    private int mYear;
-    private int mMonth;
-    private int mDay;
-    private int mHour;
-    private int mMinute;
-    private int mSecond;
-    private int cycleTime;
-    private int img;
-    private ArrayList<String> label;
-    private String week;
+    private Plan plan;
 
     private Toolbar toolbar;
     private ListView menuListView;
@@ -68,11 +57,36 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         titleExitText = findViewById(R.id.add_plan_title_editText);
         remarksExitText = findViewById(R.id.add_plan_remarks_editText);
         menuListView = findViewById(R.id.add_plan_menu_listView);
-        // 初始化用户数据
-        InitDate();
 
-        // 工具栏的实现
-        toolbar.inflateMenu(R.menu.add_plan_toolbar_menu);
+        // 获取editor传过来的数据
+        plan = (Plan) getIntent().getSerializableExtra("editor_plan");
+        if (plan != null)
+        {
+            titleExitText.setText(plan.getTitle());
+            remarksExitText.setText(plan.getRemarks());
+        } else {
+            // 新建plan的初始化
+            plan = new Plan();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E");
+            Date date = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            /* 年月日默认为添加的时间 */
+            plan.setYear(calendar.get(Calendar.YEAR));
+            plan.setMonth(calendar.get(Calendar.MONTH) + 1);
+            plan.setDay(calendar.get(Calendar.DAY_OF_MONTH));
+            /* 时分秒默认为0 */
+            plan.setHour(0);
+            plan.setMinute(0);
+            plan.setSecond(0);
+            /* 星期 */
+            plan.setWeek(simpleDateFormat.format(date));
+
+            /* 其他的属性默认值 */
+            plan.setCycleTime("");
+            plan.setBackgroundImg(R.drawable.test3);
+            plan.setLabel(new ArrayList<>());
+        }
 
         // 工具栏返回图标的监听事件
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -110,26 +124,13 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
                 Toast.makeText(AddPlanActivity.this, R.string.tipInputText, Toast.LENGTH_SHORT).show();
                 return true;
             }
-            String title = titleExitText.getText().toString();
-            String remarks = remarksExitText.getText().toString();
-            Plan newPlan = new Plan();
-            newPlan.setTitle(title);
-            newPlan.setRemarks(remarks);
-            newPlan.setBackgroundImg(img);
-            newPlan.setCycleTime(cycleTime);
-            newPlan.setLabel(label);
-
-            newPlan.setYear(mYear);
-            newPlan.setMonth(mMonth);
-            newPlan.setDay(mDay);
-            newPlan.setHour(mHour);
-            newPlan.setMinute(mMinute);
-            newPlan.setSecond(mSecond);
-            newPlan.setWeek(week);
+            // 设置标题和备注
+            plan.setTitle(titleExitText.getText().toString());
+            plan.setRemarks(remarksExitText.getText().toString());
 
             // 数据传回主界面
             Intent intent = new Intent(AddPlanActivity.this, MainActivity.class);
-            intent.putExtra("newPlan", newPlan);
+            intent.putExtra("newPlan", plan);
             setResult(RESULT_OK, intent);
 
             // 销毁界面
@@ -138,48 +139,38 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         }
     }
 
-    // 初始化时间，设置时间为当前时间
-    private void InitDate() {
-        Date date = new Date();
-
-        Calendar calendar =Calendar.getInstance();
-        calendar.setTime(date);
-        /* 年月日默认为添加的时间 */
-        mYear = calendar.get(Calendar.YEAR);
-        mMonth = calendar.get(Calendar.MONTH) + 1;
-        mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        /* 时分秒默认为0 */
-        mHour = 0;
-        mMinute = 0;
-        mSecond = 0;
-
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E");
-        Date weekDate = new Date(System.currentTimeMillis());
-        week = simpleDateFormat.format(weekDate);
-
-        Log.i("week", week);
-
-        /* 其他的属性默认值 */
-        cycleTime = 0;
-        img = R.drawable.test3;
-        label = new ArrayList<>();
-    }
-
     // 设置菜单列表每一列的内容
     private List<Map<String, Object>> getMenuData() {
+        // 判断是否为新建plan
+        boolean createNewPlan = getIntent().getBooleanExtra("create_new_plan",false);
+
+        String menuDateTip = "长按使用日期计算器";
+        String menuRepeatTip = "无";
+        StringBuilder menuLabelTip = new StringBuilder();
+        // 如果是编辑界面设置菜单列表内容
+        if (!createNewPlan) {
+            menuDateTip = plan.getYear() + "年" + plan.getMonth() + "月" + plan.getDay() + "日";
+            if (plan.getHour() > 0)
+                menuDateTip += " " + plan.getHour() + ":" + plan.getMinute();
+
+            menuRepeatTip = plan.getCycleTime();
+            for (int i=0; i <plan.getLabel().size(); i++){
+                menuLabelTip.append(plan.getLabel().get(i)).append(" ");
+            }
+        }
 
         // 日期
         Map<String, Object> menuItem = new HashMap<String, Object>();
         menuItem.put("menu_image", R.drawable.add_plan_menu_date);
         menuItem.put("menu_title", "时间");
-        menuItem.put("menu_tip", "长按使用日期计算器");
+        menuItem.put("menu_tip",menuDateTip);
         menuList.add(menuItem);
 
         // 设置重复
         menuItem = new HashMap<>();
         menuItem.put("menu_image", R.drawable.add_plan_menu_repeat);
         menuItem.put("menu_title", "重复");
-        menuItem.put("menu_tip", "无");
+        menuItem.put("menu_tip", menuRepeatTip);
         menuList.add(menuItem);
 
         // 图片
@@ -193,7 +184,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         menuItem = new HashMap<>();
         menuItem.put("menu_image", R.drawable.add_plan_menu_label);
         menuItem.put("menu_title", "添加标签");
-        menuItem.put("menu_tip", "");
+        menuItem.put("menu_tip", menuLabelTip);
         menuList.add(menuItem);
 
         return menuList;
@@ -208,11 +199,11 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         showDialogForSelectTime();
 
         /* 设置选择后的日期，并在菜单下方显示选择的日期 */
-        mYear = selectYear;
-        mMonth = selectMonthOfYear + 1;
-        mDay = selectDayOfMonth;
+        plan.setYear(selectYear);
+        plan.setMonth(selectMonthOfYear + 1);
+        plan.setDay(selectDayOfMonth);
         Map<String, Object> newDateMap = menuList.get(MENU_SELECT_TIME);
-        String dateStr = mYear + "年" + mMonth + "月" + mDay + "日";
+        String dateStr = selectYear + "年" + selectMonthOfYear + "月" + selectDayOfMonth + "日";
         newDateMap.put("menu_tip", dateStr);
 
         /* 更新菜单，显示用户选择的日期 */
@@ -223,7 +214,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         try {
             Date weekDate = simpleDateFormat.parse(dateStr);
             simpleDateFormat = new SimpleDateFormat("E");
-            week = simpleDateFormat.format(weekDate);
+            plan.setWeek(simpleDateFormat.format(weekDate));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -233,11 +224,12 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     @Override
     public void onTimeSet(TimePickerDialog view, int selectHourOfDay, int selectMinute, int selectSecond) {
         /* 设置选择后的时间 */
-        mHour = selectHourOfDay;
-        mMinute = selectMinute;
-        mSecond = selectSecond;
+        plan.setHour(selectHourOfDay);
+        plan.setMinute(selectMinute);
+        plan.setSecond(selectSecond);
+        // 更新菜单标题下的提示文字
         Map<String, Object> newDateMap = menuList.get(MENU_SELECT_TIME);
-        String dateStr = mYear + "年" + mMonth + "月" + mDay + "日" + " " + mHour + ":" + mMinute;
+        String dateStr = plan.getYear() + "年" + plan.getMonth() + "月" + plan.getDay() + "日" + " " + plan.getHour() + ":" + plan.getMinute();
         newDateMap.put("menu_tip", dateStr);
 
         /* 更新菜单，显示用户选择的日期和时间 */
@@ -284,7 +276,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
          * 时间日期选择器                                                                      *
          * https://github.com/wdullaer/MaterialDateTimePicker#using-material-datetime-pickers *
          **/
-         DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(AddPlanActivity.this, mYear, mMonth-1, mDay);
+         DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(AddPlanActivity.this, plan.getYear(), plan.getMonth(), plan.getDay());
          datePickerDialog.setVersion(DatePickerDialog.Version.VERSION_2);
          datePickerDialog.setAccentColor(getResources().getColor(R.color.colorPrimaryDark));
          datePickerDialog.setOkText("确定");
@@ -299,7 +291,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
          * 时间日期选择器                                                                      *
          * https://github.com/wdullaer/MaterialDateTimePicker#using-material-datetime-pickers *
          **/
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(AddPlanActivity.this, mHour, mMinute, true);
+        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(AddPlanActivity.this, plan.getHour(), plan.getMinute(), true);
         timePickerDialog.setVersion(TimePickerDialog.Version.VERSION_2);
         timePickerDialog.setAccentColor(getResources().getColor(R.color.colorPrimaryDark));
         timePickerDialog.setOkText("确定");
@@ -309,15 +301,10 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
 
     // 选择重复时间
     private void showDialogForSelectRepeat() {
-        final int EVERY_WEEK = 0;
-        final int EVERY_MONTH = 1;
-        final int EVERY_YEAR = 2;
-        final int CUSTOMIZE = 3;
-        final int NOT = 4;
 
         String[] items;
         // 如果有自义定重复设置，则添加 “无” 菜单选项
-        if (cycleTime == 0){
+        if (plan.getCycleTime().equals("")){
             items = new String[]{"每周", "每月", "每年", "自定义"};
         }else{
             items = new String[]{"每周", "每月", "每年", "自定义", "无"};
@@ -326,69 +313,55 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         listDialog.setTitle("周期");
         listDialog.setItems(items, (dialogInterface, position) -> {
             // Toast.makeText(AddPlanActivity.this, "你点击了" + items[position],Toast.LENGTH_SHORT).show();
-            // 提示栏显示设置
-            Map<String, Object> newRepeatMap = menuList.get(MENU_SELECT_REPEAT);
-            newRepeatMap.put("menu_tip", items[position]);
-            menuAdapter.notifyDataSetChanged();
+            // 设置循环天数
+            if (!items[position].equals("自定义")) {
+                // 提示栏显示设置
+                Map<String, Object> newRepeatMap = menuList.get(MENU_SELECT_REPEAT);
+                newRepeatMap.put("menu_tip", items[position]);
+                menuAdapter.notifyDataSetChanged();
 
-            switch (position)
-            {
-                case EVERY_WEEK:{
-                    cycleTime = 7;
-                    break;
-                }
-                case EVERY_MONTH:{
-                    cycleTime = 30;
-                    break;
-                }
-                case EVERY_YEAR:{
-                    cycleTime = 365;
-                    break;
-                }
-                case NOT:{
-                    cycleTime = 0;
-                    break;
-                }
-                case CUSTOMIZE:{
-                    // 创建layout对象
-                    LinearLayout labelLinearLayout = new LinearLayout(AddPlanActivity.this);
-                    LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                    labelLinearLayout.setLayoutParams(labelParams);
-                    // 创建EditText对象
-                    EditText editText = new EditText(AddPlanActivity.this);
-                    editText.setHint("输入周期(天)");
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    // 为EditText建立布局样式
-                    LinearLayout.LayoutParams editTextParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                    editTextParams.leftMargin = 80;
-                    editTextParams.rightMargin = 80;
-                    // 在父布局中添加他，及其布局样式
-                    labelLinearLayout.addView(editText, editTextParams);
-
-                    AlertDialog.Builder inputDialog = new AlertDialog.Builder(AddPlanActivity.this);
-                    inputDialog.setTitle("周期").setView(labelLinearLayout);
-
-                    inputDialog.setNegativeButton("取消", (dialogInterface1, i) -> dialogInterface1.dismiss());
-
-                    inputDialog.setPositiveButton("确定", (dialogInterface12, i) -> {
-                        cycleTime = Integer.valueOf(editText.getText().toString());
-                        // 提示栏显示设置
-                        if (cycleTime != 0) {
-                            newRepeatMap.put("menu_tip", cycleTime + "天");
-                            menuAdapter.notifyDataSetChanged();
-                        }else{
-                            newRepeatMap.put("menu_tip","无");
-                            menuAdapter.notifyDataSetChanged();
-                        }
-                        dialogInterface12.dismiss();
-                    });
-                    inputDialog.show();
-                    break;
-                }
+                plan.setCycleTime(items[position]);
             }
+            // 自义定循环天数
+            if (items[position].equals("自定义")) {
+                // 创建layout对象
+                LinearLayout labelLinearLayout = new LinearLayout(AddPlanActivity.this);
+                LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                labelLinearLayout.setLayoutParams(labelParams);
+                // 创建EditText对象
+                EditText editText = new EditText(AddPlanActivity.this);
+                editText.setHint("输入周期(天)");
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                // 为EditText建立布局样式
+                LinearLayout.LayoutParams editTextParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                editTextParams.leftMargin = 80;
+                editTextParams.rightMargin = 80;
+                // 在父布局中添加他，及其布局样式
+                labelLinearLayout.addView(editText, editTextParams);
+
+                AlertDialog.Builder inputDialog = new AlertDialog.Builder(AddPlanActivity.this);
+                inputDialog.setTitle("周期").setView(labelLinearLayout);
+                // 取消输入响应事件
+                inputDialog.setNegativeButton("取消", (dialogInterface1, i) -> dialogInterface1.dismiss());
+                // 确定输入响应事件
+                inputDialog.setPositiveButton("确定", (dialogInterface12, i) -> {
+                    Map<String, Object> newRepeatMap = menuList.get(MENU_SELECT_REPEAT);
+                    // 提示栏显示设置
+                    if (!editText.getText().toString().equals("")) {
+                        plan.setCycleTime(editText.getText().toString());
+                        newRepeatMap.put("menu_tip", editText.getText() + "天");
+                        menuAdapter.notifyDataSetChanged();
+                    } else {
+                        newRepeatMap.put("menu_tip", "无");
+                        menuAdapter.notifyDataSetChanged();
+                    }
+                    dialogInterface12.dismiss();
+                });
+                inputDialog.show();
+            }
+
         });
         listDialog.show();
-
     }
 
     // 显示选择标签界面
@@ -413,10 +386,10 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         String[] items = {"生日", "纪念日", "工作", "考试"};
         boolean[] initChoiceItems = {false, false, false, false};
         // 当再次点击时，还原上次设置 （先用着比较愚蠢的办法（猝死...））
-        for (int i=0; i<label.size(); i++)
+        for (int i=0; i<plan.getLabel().size(); i++)
         {
             for (int j=0; j<items.length; j++)
-                if (label.get(i).equals(items[j]))
+                if (plan.getLabel().get(i).equals(items[j]))
                 {
                     initChoiceItems[j] = true;
                     checkLabel.add(items[j]);
@@ -445,7 +418,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
             newRepeatMap.put("menu_tip", labelStr);
             menuAdapter.notifyDataSetChanged();
 
-            label = checkLabel;
+            plan.setLabel(checkLabel);
         });
 
         // 添加新标签按钮

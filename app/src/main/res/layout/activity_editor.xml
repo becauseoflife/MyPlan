@@ -1,88 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditorActivity"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/editor_menu_drawerLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/add_plan_toolBar"
+        android:id="@+id/editor_menu_toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimaryDark"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/add_plan_back"
-        app:title="editor"
         app:titleTextColor="@android:color/white"
         tools:ignore="MissingConstraints"
+        app:menu="@menu/editor_toolbar_menu"
         />
 
-    <!-- 标题 备注 背景显示 -->
-    <RelativeLayout
-        android:id="@+id/add_plan_bgimg"
+    <FrameLayout
+        android:id="@+id/editor_bkg_frame"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@+id/add_plan_toolBar"
-        android:orientation="vertical"
-
+        android:layout_height="320dp"
+        android:layout_below="@+id/editor_menu_toolBar"
+        android:background="@drawable/test3"
         >
 
-        <TextView
-            android:id="@+id/add_plan_title_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="40dp"
-            android:text="@string/add_plan_title"
-            android:layout_marginStart="40dp" />
-
-        <EditText
-            android:id="@+id/add_plan_title_editText"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/add_plan_title_textView"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="@string/add_plan_title_tip_text"
-            android:importantForAutofill="no"
-            tools:ignore="LabelFor"
-            android:layout_marginStart="40dp" />
+            android:layout_gravity="center"
+            tools:ignore="UselessParent">
 
-        <TextView
-            android:id="@+id/add_plan_remarks_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/add_plan_title_editText"
-            android:text="@string/add_plan_remarks"
-            android:layout_marginStart="40dp" />
+            <TextView
+                android:id="@+id/editor_bkg_title_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/all_text_color"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:text="标题标题" />
 
-        <EditText
-            android:id="@+id/add_plan_remarks_editText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/add_plan_remarks_textView"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="@string/add_plan_remark_tip_text"
-            android:importantForAutofill="no"
-            tools:ignore="LabelFor"
-            android:layout_marginStart="40dp" />
+            <TextView
+                android:id="@+id/editor_bkg_date_textView"
+                android:layout_below="@+id/editor_bkg_title_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:textStyle="normal"
+                android:textSize="20sp"
+                android:textColor="@color/all_text_color"
+                android:text="TextView" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/editor_count_down_textView"
+                android:layout_below="@+id/editor_bkg_date_textView"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:textSize="25dp"
+                android:textColor="@color/all_text_color"
+                android:textStyle="bold"
+                android:text="倒计时倒计时" />
+
+
+        </RelativeLayout>
+
+    </FrameLayout>
 
     <ListView
-        android:id="@+id/add_plan_menu_listView"
+        android:id="@+id/editor_set_menu_listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/add_plan_bgimg"
+        android:layout_below="@+id/editor_bkg_frame"
         />
-
 </RelativeLayout>
