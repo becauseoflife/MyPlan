@@ -152,8 +152,8 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
             menuDateTip = plan.getYear() + "年" + plan.getMonth() + "月" + plan.getDay() + "日";
             if (plan.getHour() > 0)
                 menuDateTip += " " + plan.getHour() + ":" + plan.getMinute();
-
-            menuRepeatTip = plan.getCycleTime();
+            if (!plan.getCycleTime().equals(""))
+                menuRepeatTip = plan.getCycleTime();
             for (int i=0; i <plan.getLabel().size(); i++){
                 menuLabelTip.append(plan.getLabel().get(i)).append(" ");
             }

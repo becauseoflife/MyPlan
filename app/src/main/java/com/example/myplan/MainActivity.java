@@ -2,7 +2,10 @@ package com.example.myplan;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
@@ -10,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,10 +28,12 @@ import com.example.myplan.data.GetPlanDateBetweenNow;
 import com.example.myplan.data.model.Plan;
 import com.example.myplan.data.PlanFragmentPagerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT;
 
@@ -35,6 +41,12 @@ import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_SET_USER_
 public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_ADD_NEW_PLAN = 901;
     public static final int REQUEST_CODE_EDITOR_PLAN = 902;
+
+    private DrawerLayout drawerLayout;
+    private Toolbar toolbar;
+    private NavigationView navigationView;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private View navigationHeadView;
 
     private ViewPager homePlanViewPager;        // 主页轮播图控件
     private LinearLayout homeViewPoints;    // 主页导航小圆点控件
@@ -80,6 +92,34 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(NewPlanIntent, REQUEST_CODE_ADD_NEW_PLAN);
             }
         });
+
+        // 侧滑菜单
+        toolbar = findViewById(R.id.main_toolBar);
+        drawerLayout = findViewById(R.id.main_drawer_layout);
+        navigationView = findViewById(R.id.main_navigationView);
+        navigationView.setItemIconTintList(null);   // 显示原本的图片
+        navigationHeadView = navigationView.getHeaderView(0);   // 获取头布局
+
+        setSupportActionBar(toolbar);// 取代原来的ActionBar
+        Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(true);   // 设置返回键可以使用
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);  // 设置显示返回箭头
+        // 实现打开、关闭的监听
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+        actionBarDrawerToggle.syncState();      // 显示三条杠
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);      // 菜单拖动监听事件
+        // 侧滑菜单点击事件
+        navigationHeadView.setOnClickListener(new loginOnClickListener());
+        navigationView.setNavigationItemSelectedListener(new myOnNavigationItemSelected());
 
     }
 
@@ -258,4 +298,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 侧滑菜单NavigationView菜单项的点击事件
+    private class myOnNavigationItemSelected implements NavigationView.OnNavigationItemSelectedListener {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+            drawerLayout.closeDrawers();
+            return true;
+        }
+    }
+
+    // 侧滑菜单头布局点击事件
+    private class loginOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(MainActivity.this, "点击了登录", Toast.LENGTH_LONG).show();
+        }
+    }
 }
