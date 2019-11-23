@@ -58,35 +58,8 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         remarksExitText = findViewById(R.id.add_plan_remarks_editText);
         menuListView = findViewById(R.id.add_plan_menu_listView);
 
-        // 获取editor传过来的数据
-        plan = (Plan) getIntent().getSerializableExtra("editor_plan");
-        if (plan != null)
-        {
-            titleExitText.setText(plan.getTitle());
-            remarksExitText.setText(plan.getRemarks());
-        } else {
-            // 新建plan的初始化
-            plan = new Plan();
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E");
-            Date date = new Date();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            /* 年月日默认为添加的时间 */
-            plan.setYear(calendar.get(Calendar.YEAR));
-            plan.setMonth(calendar.get(Calendar.MONTH)+1);
-            plan.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-            /* 时分秒默认为0 */
-            plan.setHour(-1);
-            plan.setMinute(-1);
-            plan.setSecond(0);
-            /* 星期 */
-            plan.setWeek(simpleDateFormat.format(date));
-
-            /* 其他的属性默认值 */
-            plan.setCycleTime("");
-            plan.setBackgroundImg(R.drawable.test3);
-            plan.setLabel(new ArrayList<>());
-        }
+        // 初始化Plan数据
+        InitPlan();
 
         // 工具栏返回图标的监听事件
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -115,6 +88,38 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
 
     }
 
+    // 初始化Plan数据
+    private void InitPlan() {
+        plan = (Plan) getIntent().getSerializableExtra("editor_plan");
+        if (plan != null)
+        {
+            titleExitText.setText(plan.getTitle());
+            remarksExitText.setText(plan.getRemarks());
+        } else {
+            // 新建plan的初始化
+            plan = new Plan();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E");
+            Date date = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            /* 年月日默认为添加的时间 */
+            plan.setYear(calendar.get(Calendar.YEAR));
+            plan.setMonth(calendar.get(Calendar.MONTH)+1);
+            plan.setDay(calendar.get(Calendar.DAY_OF_MONTH));
+            /* 时分秒默认为0 */
+            plan.setHour(-1);
+            plan.setMinute(-1);
+            plan.setSecond(0);
+            /* 星期 */
+            plan.setWeek(simpleDateFormat.format(date));
+
+            /* 其他的属性默认值 */
+            plan.setCycleTime("");
+            plan.setBackgroundImg(R.drawable.test3);
+            plan.setLabel(new ArrayList<>());
+        }
+    }
+
     // 点击确认按钮，生成新的Plan
     private class MyMenuClickListener implements Toolbar.OnMenuItemClickListener {
         @Override
@@ -127,9 +132,6 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
             // 设置标题和备注
             plan.setTitle(titleExitText.getText().toString());
             plan.setRemarks(remarksExitText.getText().toString());
-
-            Calendar calendar = Calendar.getInstance();
-            plan.setSecond(calendar.get(Calendar.SECOND));
 
             // 数据传回主界面
             Intent intent = new Intent(AddPlanActivity.this, MainActivity.class);
@@ -230,8 +232,6 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         /* 设置选择后的时间 */
         plan.setHour(selectHourOfDay);
         plan.setMinute(selectMinute);
-        Calendar calendar = Calendar.getInstance();
-        plan.setSecond(calendar.get(Calendar.SECOND));
         // 更新菜单标题下的提示文字
         Map<String, Object> newDateMap = menuList.get(MENU_SELECT_TIME);
         @SuppressLint("DefaultLocale") String dateStr =
@@ -298,7 +298,13 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
          * 时间日期选择器                                                                      *
          * https://github.com/wdullaer/MaterialDateTimePicker#using-material-datetime-pickers *
          **/
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(AddPlanActivity.this, 0, 0, true);
+        int hour = 0;
+        int minute = 0;
+        if (plan.getHour() >= 0) {
+            hour = plan.getHour();
+            minute = plan.getMinute();
+        }
+        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(AddPlanActivity.this, hour, minute, true);
         timePickerDialog.setVersion(TimePickerDialog.Version.VERSION_2);
         timePickerDialog.setAccentColor(getResources().getColor(R.color.colorPrimaryDark));
         timePickerDialog.setOkText("确定");

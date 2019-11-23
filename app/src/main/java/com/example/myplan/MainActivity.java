@@ -7,6 +7,10 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentTransitionImpl;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private PlansArrayAdapter thePlansListAdapter;
     private PlanFragmentPagerAdapter thePlansPagerAdapter;
 
+    private ArrayList<Fragment> planFragmentList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 显示倒计时轮播图
         thePlansPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
-        thePlansPagerAdapter.setPlanArrayList(myPlan);
+        planFragmentList = InitPlanFragment();
+        thePlansPagerAdapter.setFragmentList(planFragmentList);
 
         homePlanViewPager = findViewById(R.id.home_viewPager);
         homePlanViewPager.setAdapter(thePlansPagerAdapter);
@@ -125,13 +131,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private ArrayList<Fragment> InitPlanFragment() {
+        planFragmentList = new ArrayList<>();
+        for (int i=0; i<myPlan.size(); i++){
+            planFragmentList.add(new ViewPlanFragment(myPlan.get(i), i));
+        }
+        return planFragmentList;
+    }
+
     // 获得传回的数据
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode)
         {
-            case REQUEST_CODE_ADD_NEW_PLAN:
+            case REQUEST_CODE_ADD_NEW_PLAN:{
                 if (resultCode == RESULT_OK)
                 {
                     Plan newPlan = (Plan) data.getSerializableExtra("newPlan");
@@ -139,14 +153,48 @@ public class MainActivity extends AppCompatActivity {
                     myPlan.add(newPlan);
                     thePlansListAdapter.notifyDataSetChanged();
                     // 更新轮播列表
-                    thePlansPagerAdapter.setPlanArrayList(myPlan);
+                    planFragmentList = InitPlanFragment();
+                    thePlansPagerAdapter.setFragmentList(planFragmentList);
                     thePlansPagerAdapter.notifyDataSetChanged();
                     // 添加一个导航小圆点
                     addPoint();
 
                     Toast.makeText(MainActivity.this, "新建成功", Toast.LENGTH_SHORT).show();
                 }
-            break;
+                break;
+            }
+            case REQUEST_CODE_EDITOR_PLAN:{
+                if (resultCode == RESULT_OK){
+                    int deletePlanPosition = data.getIntExtra("delete_plan_position", -1);
+                    if (deletePlanPosition >= 0 ) {
+                        myPlan.remove(deletePlanPosition);
+                        // 更新列表
+                        thePlansListAdapter.notifyDataSetChanged();
+                        // 更新轮播列表
+                        planFragmentList = InitPlanFragment();
+                        thePlansPagerAdapter.setFragmentList(planFragmentList);
+                        thePlansPagerAdapter.notifyDataSetChanged();
+                        // 删除一个导航小圆点
+                        homeViewPoints.removeViewAt(deletePlanPosition);
+
+                        Toast.makeText(MainActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Plan editorPlan = (Plan)data.getSerializableExtra("editor_plan");
+                        int editorPlanPosition = data.getIntExtra("editor_plan_position", -1);
+                        myPlan.set(editorPlanPosition, editorPlan);
+
+                        // 更新列表
+                        thePlansListAdapter.notifyDataSetChanged();
+                        // 更新轮播列表
+                        planFragmentList = InitPlanFragment();
+                        thePlansPagerAdapter.setFragmentList(planFragmentList);
+                        thePlansPagerAdapter.notifyDataSetChanged();
+                        //Toast.makeText(MainActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            }
         }
     }
 
@@ -279,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
             // 向编辑界面传输数据
             Intent editorIntent = new Intent(MainActivity.this, EditorActivity.class);
             editorIntent.putExtra("editor_plan", myPlan.get(position));
+            editorIntent.putExtra("editor_plan_position", position);
             startActivityForResult(editorIntent, REQUEST_CODE_EDITOR_PLAN);
         }
     }

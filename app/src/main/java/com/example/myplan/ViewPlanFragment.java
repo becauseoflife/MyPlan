@@ -26,6 +26,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 
 /**
@@ -33,12 +34,13 @@ import java.util.Date;
  */
 public class ViewPlanFragment extends Fragment {
 
-    private static final int REQUEST_CODE_EDITOR_PLAN = 903;
-
+    private static final int REQUEST_CODE_EDITOR_PLAN = 902;
+    private int planPosition;
     private Plan plan;
-    public ViewPlanFragment(Plan plan) {
+    public ViewPlanFragment(Plan plan, int position) {
         // Required empty public constructor
         this.plan = plan;
+        this.planPosition = position;
     }
 
     @SuppressLint("DefaultLocale")
@@ -73,8 +75,7 @@ public class ViewPlanFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onTick(long countDownTimeMs) {
-                if (countDownTimeMs < 0)
-                    return;
+
                 ArrayList<String> countDownTime = getDate.getCountDownDateArrayList(countDownTimeMs);
 
                 StringBuilder countDownStr = new StringBuilder();
@@ -96,7 +97,8 @@ public class ViewPlanFragment extends Fragment {
             public void onClick(View view) {
                 Intent editorIntent = new Intent(getContext(), EditorActivity.class);
                 editorIntent.putExtra("editor_plan", plan);
-                startActivityForResult(editorIntent, REQUEST_CODE_EDITOR_PLAN);
+                editorIntent.putExtra("editor_plan_position", planPosition);
+                Objects.requireNonNull(getActivity()).startActivityForResult(editorIntent, REQUEST_CODE_EDITOR_PLAN);
             }
         });
 

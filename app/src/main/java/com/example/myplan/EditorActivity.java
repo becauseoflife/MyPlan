@@ -1,5 +1,6 @@
 package com.example.myplan;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -29,8 +30,6 @@ import java.util.Map;
 public class EditorActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_EDITOR_PLAN = 905;
 
-    private int editorCountDownClickNum;
-
     private Toolbar editorToolBar;
     private ListView listViewSettingMenu;
     private TextView editorTitle;
@@ -39,6 +38,8 @@ public class EditorActivity extends AppCompatActivity {
     private FrameLayout bkgFrameLayout;
     private List<Map<String, Object>> menuList = new ArrayList<Map<String, Object>>();
     private Plan plan;
+    private int planPosition;
+    private CountDownTimer timer;   // 倒计时
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +55,11 @@ public class EditorActivity extends AppCompatActivity {
         editorToolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 将修改的数据传回主界面
+                Intent editorIntent = new Intent(EditorActivity.this, MainActivity.class);
+                editorIntent.putExtra("editor_plan", plan);
+                editorIntent.putExtra("editor_plan_position", planPosition);
+                setResult(RESULT_OK, editorIntent);
                 EditorActivity.this.finish();
             }
         });
@@ -74,6 +80,17 @@ public class EditorActivity extends AppCompatActivity {
 
         // 获取数据
         plan = (Plan) getIntent().getSerializableExtra("editor_plan");
+        planPosition = getIntent().getIntExtra("editor_plan_position",-1);
+
+        // 界面显示
+        editorPlanView();
+
+        editorCountDown.setOnClickListener(new ChangeFormatOnClickListener());
+
+    }
+
+    // 编辑界面plan的显示
+    private void editorPlanView() {
         // 设置显示的数据
         bkgFrameLayout.setBackgroundResource(plan.getBackgroundImg());
         editorTitle.setText(plan.getTitle());
@@ -89,12 +106,10 @@ public class EditorActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         // 倒计时
-        CountDownTimer timer = new CountDownTimer(ms, 1000) {
+        timer = new CountDownTimer(ms, 1000) {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onTick(long countDownTimeMs) {
-                if (countDownTimeMs < 0)
-                    return;
                 ArrayList<String> countDownTime = getDate.getCountDownDateArrayList(countDownTimeMs);
 
                 StringBuilder countDownStr = new StringBuilder();
@@ -110,9 +125,26 @@ public class EditorActivity extends AppCompatActivity {
             }
         };
         timer.start();
+    }
 
-        editorCountDown.setOnClickListener(new ChangeFormatOnClickListener());
-
+    // 处理修改返回的数据
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode)
+        {
+            case REQUEST_CODE_EDITOR_PLAN:{
+                if (resultCode == RESULT_OK)
+                {
+                    if (data != null) {
+                        this.plan = (Plan)data.getSerializableExtra("newPlan");
+                    }
+                    timer.cancel();     // 取消旧的倒计时
+                    editorPlanView();   // 刷新界面
+                }
+                break;
+            }
+        }
     }
 
     // 左滑菜单里面的内容
@@ -162,6 +194,10 @@ public class EditorActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.delete_icon:{
+                    Intent deleteIntent = new Intent(EditorActivity.this, MainActivity.class);
+                    deleteIntent.putExtra("delete_plan_position", planPosition);
+                    setResult(RESULT_OK, deleteIntent);
+                    EditorActivity.this.finish();
                     Toast.makeText(EditorActivity.this, "点击删除", Toast.LENGTH_SHORT).show();
                     break;
                 }
