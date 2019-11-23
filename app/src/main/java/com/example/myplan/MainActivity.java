@@ -2,6 +2,7 @@ package com.example.myplan;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
        homePlanViewPager.addOnPageChangeListener(new myOnPageChangeListener());
 
         // 显示倒计时列表菜单
-        thePlansListAdapter = new PlansArrayAdapter(this, R.layout.list_item_plan, myPlan);
+        thePlansListAdapter = new PlansArrayAdapter(this, R.layout.main_list_item_plan, myPlan);
         homePlanListView = findViewById(R.id.home_listView);
         homePlanListView.setAdapter(thePlansListAdapter);
         homePlanListView.setOnItemClickListener(new PlanItemClickListener());
@@ -187,10 +189,10 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         myPlan = new ArrayList<>();
         ArrayList<String> label = new ArrayList<>();
-        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,label,"",1998,11,20,9,50,15, "周四"));
-        myPlan.add(new Plan("标题2","备注2",R.drawable.test4,label,"无",2019,11,15,9,50,15,"周五"));
-        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,label,"每周",2019,12,25,0,00,15,"周六"));
-        myPlan.add(new Plan("标题4","",R.drawable.test2,label,"每年",2021,11,20,9,50,15,"周日"));
+        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,label,"",1998,12,11,9,50,15, "周四"));
+        myPlan.add(new Plan("标题2","备注2",R.drawable.test4,label,"无",2019,10,15,9,50,15,"周五"));
+        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,label,"每周",2019,12,25,0,0,15,"周六"));
+        myPlan.add(new Plan("标题4","",R.drawable.test2,label,"每年",2021,11,23,9,50,15,"周日"));
     }
 
     // 主页显示item适配器
@@ -202,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
             resourceId=resource;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @SuppressLint("SetTextI18n")
         @NonNull
         @Override
@@ -219,39 +222,21 @@ public class MainActivity extends AppCompatActivity {
             Plan plan_item = this.getItem(position);    // 获得一个plan
 
             if (plan_item != null) {
-                String tipStr="";
-                long tipDay = 0;
-                String planDateStr = plan_item.getYear() + "-" + plan_item.getMonth()+ "-" + plan_item.getDay();
-
-                GetPlanDateBetweenNow getDays = new GetPlanDateBetweenNow(planDateStr, "yyyy-MM-dd");
+                GetPlanDateBetweenNow getDays = new GetPlanDateBetweenNow(plan_item);
+                ArrayList<String> TipDate = null;
                 try {
-                    tipDay = getDays.CalculationMillisecond(); // 获得相隔秒数
+                    TipDate = getDays.getTipAndBetweenDate();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                // 比较大小
-                if (tipDay < 0){
-                    tipStr = "已经";
-                    tipDay = Math.abs(tipDay);
-                }
-                else if (tipDay > 0){
-                    if ((tipDay / 24*60*60*1000) < 30)
-                        tipStr = "只剩";
+
+                if (TipDate != null) {
+                    tip.setText(TipDate.get(0));
+                    if (TipDate.get(1).equals(""))
+                        time.setVisibility(View.GONE);
                     else
-                        tipStr = "还有";
+                        time.setText(TipDate.get(1));
                 }
-                else {
-                    tipStr = "今天";
-                }
-                // 控件上显示的信息
-                tip.setText(tipStr);
-                if (tipDay != 0){
-                    tipDay /= 24*60*60*1000;
-                    int day = (int) (tipDay-1);
-                    time.setText(day + "天");
-                }
-                else
-                    time.setVisibility(View.GONE);
 
                 bgImg.setImageResource(plan_item.getBackgroundImg());
 

@@ -73,11 +73,11 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
             calendar.setTime(date);
             /* 年月日默认为添加的时间 */
             plan.setYear(calendar.get(Calendar.YEAR));
-            plan.setMonth(calendar.get(Calendar.MONTH) + 1);
+            plan.setMonth(calendar.get(Calendar.MONTH)+1);
             plan.setDay(calendar.get(Calendar.DAY_OF_MONTH));
             /* 时分秒默认为0 */
-            plan.setHour(0);
-            plan.setMinute(0);
+            plan.setHour(-1);
+            plan.setMinute(-1);
             plan.setSecond(0);
             /* 星期 */
             plan.setWeek(simpleDateFormat.format(date));
@@ -128,6 +128,9 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
             plan.setTitle(titleExitText.getText().toString());
             plan.setRemarks(remarksExitText.getText().toString());
 
+            Calendar calendar = Calendar.getInstance();
+            plan.setSecond(calendar.get(Calendar.SECOND));
+
             // 数据传回主界面
             Intent intent = new Intent(AddPlanActivity.this, MainActivity.class);
             intent.putExtra("newPlan", plan);
@@ -140,6 +143,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     }
 
     // 设置菜单列表每一列的内容
+    @SuppressLint("DefaultLocale")
     private List<Map<String, Object>> getMenuData() {
         // 判断是否为新建plan
         boolean createNewPlan = getIntent().getBooleanExtra("create_new_plan",false);
@@ -150,8 +154,8 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         // 如果是编辑界面设置菜单列表内容
         if (!createNewPlan) {
             menuDateTip = plan.getYear() + "年" + plan.getMonth() + "月" + plan.getDay() + "日";
-            if (plan.getHour() > 0)
-                menuDateTip += " " + plan.getHour() + ":" + plan.getMinute();
+            if (plan.getHour() >= 0)
+                menuDateTip += " " + String.format("%02d",plan.getHour()) + ":" + String.format("%02d",plan.getMinute());
             if (!plan.getCycleTime().equals(""))
                 menuRepeatTip = plan.getCycleTime();
             for (int i=0; i <plan.getLabel().size(); i++){
@@ -194,7 +198,6 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     @SuppressLint("SimpleDateFormat")
     @Override
     public void onDateSet(DatePickerDialog view, int selectYear, int selectMonthOfYear, int selectDayOfMonth) {
-
         /* 创建用户选择时间界面 */
         showDialogForSelectTime();
 
@@ -203,7 +206,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         plan.setMonth(selectMonthOfYear + 1);
         plan.setDay(selectDayOfMonth);
         Map<String, Object> newDateMap = menuList.get(MENU_SELECT_TIME);
-        String dateStr = selectYear + "年" + selectMonthOfYear + "月" + selectDayOfMonth + "日";
+        String dateStr = selectYear + "年" + (selectMonthOfYear+1) + "月" + selectDayOfMonth + "日";
         newDateMap.put("menu_tip", dateStr);
 
         /* 更新菜单，显示用户选择的日期 */
@@ -218,6 +221,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
     }
 
     // 获得用户选择的时间的函数
@@ -226,10 +230,13 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         /* 设置选择后的时间 */
         plan.setHour(selectHourOfDay);
         plan.setMinute(selectMinute);
-        plan.setSecond(selectSecond);
+        Calendar calendar = Calendar.getInstance();
+        plan.setSecond(calendar.get(Calendar.SECOND));
         // 更新菜单标题下的提示文字
         Map<String, Object> newDateMap = menuList.get(MENU_SELECT_TIME);
-        String dateStr = plan.getYear() + "年" + plan.getMonth() + "月" + plan.getDay() + "日" + " " + plan.getHour() + ":" + plan.getMinute();
+        @SuppressLint("DefaultLocale") String dateStr =
+                plan.getYear() + "年" + plan.getMonth() + "月" + plan.getDay() + "日 " +
+                String.format("%02d", plan.getHour()) + ":" + String.format("%02d", plan.getMinute());
         newDateMap.put("menu_tip", dateStr);
 
         /* 更新菜单，显示用户选择的日期和时间 */
@@ -276,7 +283,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
          * 时间日期选择器                                                                      *
          * https://github.com/wdullaer/MaterialDateTimePicker#using-material-datetime-pickers *
          **/
-         DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(AddPlanActivity.this, plan.getYear(), plan.getMonth(), plan.getDay());
+         DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(AddPlanActivity.this, plan.getYear(), plan.getMonth()-1, plan.getDay());
          datePickerDialog.setVersion(DatePickerDialog.Version.VERSION_2);
          datePickerDialog.setAccentColor(getResources().getColor(R.color.colorPrimaryDark));
          datePickerDialog.setOkText("确定");
@@ -291,7 +298,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
          * 时间日期选择器                                                                      *
          * https://github.com/wdullaer/MaterialDateTimePicker#using-material-datetime-pickers *
          **/
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(AddPlanActivity.this, plan.getHour(), plan.getMinute(), true);
+        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(AddPlanActivity.this, 0, 0, true);
         timePickerDialog.setVersion(TimePickerDialog.Version.VERSION_2);
         timePickerDialog.setAccentColor(getResources().getColor(R.color.colorPrimaryDark));
         timePickerDialog.setOkText("确定");

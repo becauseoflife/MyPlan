@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:paddingBottom="2dp"
-    android:background="@drawable/list_item_style"
+    android:background="@drawable/main_list_item_style"
     android:id="@+id/list_item_layout"
 
    >
@@ -24,12 +24,12 @@
             android:scaleType="fitXY"
             />
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
                 <TextView
                     android:id="@+id/list_item_tip_textView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimaryDark"
                     android:gravity="center_horizontal"
@@ -37,7 +37,7 @@
 
                 <TextView
                     android:id="@+id/list_item_time_textView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:layout_below="@+id/list_item_tip_textView"

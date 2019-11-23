@@ -1,10 +1,13 @@
 package com.example.myplan;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,8 +17,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myplan.data.GetPlanDateBetweenNow;
 import com.example.myplan.data.model.Plan;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +28,8 @@ import java.util.Map;
 
 public class EditorActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_EDITOR_PLAN = 905;
+
+    private int editorCountDownClickNum;
 
     private Toolbar editorToolBar;
     private ListView listViewSettingMenu;
@@ -67,19 +74,45 @@ public class EditorActivity extends AppCompatActivity {
 
         // 获取数据
         plan = (Plan) getIntent().getSerializableExtra("editor_plan");
-        if (plan != null)
-        {
-            bkgFrameLayout.setBackgroundResource(plan.getBackgroundImg());
-            editorTitle.setText(plan.getTitle());
-            // 时间格式
-            String dateStr = plan.getYear() + "年" + plan.getMonth() + "月" + plan.getDay() + "日";
-            if (plan.getHour() > 0)
-                dateStr += plan.getHour() + ":" + plan.getMinute();
-            dateStr += plan.getWeek();
+        // 设置显示的数据
+        bkgFrameLayout.setBackgroundResource(plan.getBackgroundImg());
+        editorTitle.setText(plan.getTitle());
+        // 时间格式
+        GetPlanDateBetweenNow getDate = new GetPlanDateBetweenNow(plan);
+        editorDate.setText(getDate.getDateStr());
 
-            editorDate.setText(dateStr);
-            editorCountDown.setText("测试成功");
+        // 获取秒数
+        long ms = 0;
+        try {
+            ms = getDate.CalculationMillisecondWhitNow();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+        // 倒计时
+        CountDownTimer timer = new CountDownTimer(ms, 1000) {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onTick(long countDownTimeMs) {
+                if (countDownTimeMs < 0)
+                    return;
+                ArrayList<String> countDownTime = getDate.getCountDownDateArrayList(countDownTimeMs);
+
+                StringBuilder countDownStr = new StringBuilder();
+                for (int i=0; i<countDownTime.size(); i++)
+                    countDownStr.append(countDownTime.get(i));
+
+                editorCountDown.setText(countDownStr);
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        };
+        timer.start();
+
+        editorCountDown.setOnClickListener(new ChangeFormatOnClickListener());
+
     }
 
     // 左滑菜单里面的内容
@@ -147,6 +180,14 @@ public class EditorActivity extends AppCompatActivity {
 
 
             return false;
+        }
+    }
+
+    // 设置倒计时点击响应事件
+    private class ChangeFormatOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+
         }
     }
 }
