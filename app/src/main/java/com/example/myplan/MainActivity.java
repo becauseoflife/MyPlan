@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myplan.data.FileDataSource;
 import com.example.myplan.data.GetPlanDateBetweenNow;
 import com.example.myplan.data.model.Plan;
 import com.example.myplan.data.PlanFragmentPagerAdapter;
@@ -61,13 +62,15 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Plan> myPlan;
     private PlansArrayAdapter thePlansListAdapter;
     private PlanFragmentPagerAdapter thePlansPagerAdapter;
-
     private ArrayList<Fragment> planFragmentList;
+
+    private FileDataSource fileDataSource;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 加载数据
         initData();
 
         // 显示倒计时轮播图
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //  轮播fragment初始化
     private ArrayList<Fragment> InitPlanFragment() {
         planFragmentList = new ArrayList<>();
         for (int i=0; i<myPlan.size(); i++){
@@ -157,7 +161,10 @@ public class MainActivity extends AppCompatActivity {
                     thePlansPagerAdapter.setFragmentList(planFragmentList);
                     thePlansPagerAdapter.notifyDataSetChanged();
                     // 添加一个导航小圆点
-                    addPoint();
+                    if (myPlan.size() == 2)
+                        setPoints();
+                    if (myPlan.size() > 2)
+                        addPoint();
 
                     Toast.makeText(MainActivity.this, "新建成功", Toast.LENGTH_SHORT).show();
                 }
@@ -210,37 +217,45 @@ public class MainActivity extends AppCompatActivity {
                 view.setEnabled(false);
 
             // 设置宽高
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(30, 30);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(20, 20);
             // 设置间隔
             if (i != 0)
-                layoutParams.leftMargin = 15;
+                layoutParams.leftMargin = 13;
 
             // 添加到LinearLayout中
             homeViewPoints.addView(view, layoutParams);
         }
     }
 
-    private void addPoint()
-    {
+    private void addPoint() {
         View view = new View(MainActivity.this);
         view.setBackgroundResource(R.drawable.point_selector);
         view.setEnabled(false);
         // 设置宽高
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(30, 30);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(20, 20);
         // 设置间隔
-        layoutParams.leftMargin = 15;
+        layoutParams.leftMargin = 13;
         // 添加到LinearLayout中
         homeViewPoints.addView(view, layoutParams);
     }
 
     // 初始化数据
     private void initData() {
-        myPlan = new ArrayList<>();
-        ArrayList<String> label = new ArrayList<>();
-        myPlan.add(new Plan("标题1","备注1",R.drawable.test1,label,"",1998,12,11,9,50,15, "周四"));
-        myPlan.add(new Plan("标题2","备注2",R.drawable.test4,label,"无",2019,10,15,9,50,15,"周五"));
-        myPlan.add(new Plan("标题3","备注3",R.drawable.test3,label,"每周",2019,12,25,0,0,15,"周六"));
-        myPlan.add(new Plan("标题4","",R.drawable.test2,label,"每年",2021,11,23,9,50,15,"周日"));
+        fileDataSource = new FileDataSource(this);
+        myPlan = fileDataSource.load();
+/*        if (myPlan.size() == 0){
+            ArrayList<String> label = new ArrayList<>();
+            myPlan.add(new Plan("标题1","备注1",R.drawable.test4,label,"",2025,12,11,9,50,15, "周四"));
+            myPlan.add(new Plan("标题2","备注2",R.drawable.test5,label,"无",2021,10,15,9,50,15,"周五"));
+            myPlan.add(new Plan("标题3","备注3",R.drawable.test6,label,"每周",2019,12,25,0,0,15,"周六"));
+            myPlan.add(new Plan("标题4","",R.drawable.test2,label,"每年",2015,11,23,9,50,15,"周日"));
+        }*/
+    }
+    // 销毁时保存plan
+    @Override
+    protected void onStop() {
+        super.onStop();
+        fileDataSource.save();
     }
 
     // 主页显示item适配器
@@ -349,4 +364,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "点击了登录", Toast.LENGTH_LONG).show();
         }
     }
+
+
 }

@@ -31,7 +31,7 @@
             android:layout_below="@+id/main_toolBar"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="0dp"
-            android:background="@drawable/test1"
+
             />
         <!--小圆点-->
         <LinearLayout

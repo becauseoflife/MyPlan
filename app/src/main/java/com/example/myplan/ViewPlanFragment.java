@@ -77,17 +77,17 @@ public class ViewPlanFragment extends Fragment {
             public void onTick(long countDownTimeMs) {
 
                 ArrayList<String> countDownTime = getDate.getCountDownDateArrayList(countDownTimeMs);
-
+                // 获取倒计时格式的字符串
                 StringBuilder countDownStr = new StringBuilder();
                 for (int i=0; i<countDownTime.size(); i++)
                     countDownStr.append(countDownTime.get(i));
-
+                // 设置倒计时文本的字符串
                 countDownTextView.setText(countDownStr.toString());
             }
 
             @Override
             public void onFinish() {
-
+                countDownTextView.setText("顺计时未实现");
             }
         };
         timer.start();

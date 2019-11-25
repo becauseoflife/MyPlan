@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 public class AddPlanActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -115,7 +116,12 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
 
             /* 其他的属性默认值 */
             plan.setCycleTime("");
-            plan.setBackgroundImg(R.drawable.test3);
+            // 随机图片
+            Random random = new Random();
+            int index = random.nextInt(6);
+            int[] images = {R.drawable.test1, R.drawable.test2, R.drawable.test3, R.drawable.test4, R.drawable.test5, R.drawable.test6};
+            plan.setBackgroundImg(images[index]);
+
             plan.setLabel(new ArrayList<>());
         }
     }

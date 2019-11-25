@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -111,17 +112,17 @@ public class EditorActivity extends AppCompatActivity {
             @Override
             public void onTick(long countDownTimeMs) {
                 ArrayList<String> countDownTime = getDate.getCountDownDateArrayList(countDownTimeMs);
-
+                // 获取倒计时格式的字符串
                 StringBuilder countDownStr = new StringBuilder();
                 for (int i=0; i<countDownTime.size(); i++)
                     countDownStr.append(countDownTime.get(i));
-
+                // 设置倒计时格式的字符串
                 editorCountDown.setText(countDownStr);
             }
 
             @Override
             public void onFinish() {
-
+                editorCountDown.setText("顺计时未实现");
             }
         };
         timer.start();
@@ -194,11 +195,25 @@ public class EditorActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.delete_icon:{
-                    Intent deleteIntent = new Intent(EditorActivity.this, MainActivity.class);
-                    deleteIntent.putExtra("delete_plan_position", planPosition);
-                    setResult(RESULT_OK, deleteIntent);
-                    EditorActivity.this.finish();
-                    Toast.makeText(EditorActivity.this, "点击删除", Toast.LENGTH_SHORT).show();
+                    new android.app.AlertDialog.Builder(EditorActivity.this)
+                            .setMessage("是否删除该计时？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent deleteIntent = new Intent(EditorActivity.this, MainActivity.class);
+                                    deleteIntent.putExtra("delete_plan_position", planPosition);
+                                    setResult(RESULT_OK, deleteIntent);
+                                    EditorActivity.this.finish();
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            })
+                            .create().show();
+                    //Toast.makeText(EditorActivity.this, "点击删除", Toast.LENGTH_SHORT).show();
                     break;
                 }
                 case R.id.share_icon:{
@@ -209,7 +224,7 @@ public class EditorActivity extends AppCompatActivity {
                     Intent editorIntent = new Intent(EditorActivity.this, AddPlanActivity.class);
                     editorIntent.putExtra("editor_plan", plan);
                     startActivityForResult(editorIntent, REQUEST_CODE_EDITOR_PLAN);
-                    Toast.makeText(EditorActivity.this, "点击修改", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(EditorActivity.this, "点击修改", Toast.LENGTH_SHORT).show();
                     break;
                 }
             }
