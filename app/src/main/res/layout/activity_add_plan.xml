@@ -13,7 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimaryDark"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/add_plan_back"
+        app:navigationIcon="@drawable/button_back"
         app:titleTextColor="@android:color/white"
         tools:ignore="MissingConstraints"
         app:menu="@menu/add_plan_toolbar_menu"
@@ -21,13 +21,12 @@
 
     <!-- 标题 备注 背景显示 -->
     <RelativeLayout
-        android:id="@+id/add_plan_bgimg"
+        android:id="@+id/add_plan_bgimage"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_below="@+id/add_plan_toolBar"
         android:orientation="vertical"
-        android:background="@color/colorPrimaryDark"
-
+        android:background="?attr/colorPrimaryDark"
         android:focusable="true"
         android:focusableInTouchMode="true"
         >
@@ -39,7 +38,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginLeft="40dp"
             android:layout_marginStart="40dp"
-
             android:textSize="16sp"
             android:text="@string/add_plan_title"
             android:textColor="@color/add_plan_text_color"
@@ -52,13 +50,11 @@
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginStart="40dp"
-
             android:layout_below="@+id/add_plan_title_textView"
             android:ems="10"
             android:inputType="textPersonName"
             android:importantForAutofill="no"
             tools:ignore="LabelFor"
-
             android:textSize="20sp"
             android:hint="@string/add_plan_title_tip_text"
             android:textColorHint="@color/add_plan_text_color"
@@ -74,7 +70,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginStart="40dp"
             android:layout_below="@+id/add_plan_title_editText"
-
             android:textSize="16sp"
             android:text="@string/add_plan_remarks"
             android:textColor="@color/add_plan_text_color"
@@ -87,13 +82,11 @@
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"
             android:layout_marginStart="40dp"
-
             android:layout_below="@+id/add_plan_remarks_textView"
             android:ems="10"
             android:inputType="textPersonName"
             android:importantForAutofill="no"
             tools:ignore="LabelFor"
-
             android:textSize="20sp"
             android:hint="@string/add_plan_remark_tip_text"
             android:textColorHint="@color/add_plan_text_color"
@@ -106,7 +99,7 @@
         android:id="@+id/add_plan_menu_listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/add_plan_bgimg"
+        android:layout_below="@+id/add_plan_bgimage"
         />
 
 </RelativeLayout>

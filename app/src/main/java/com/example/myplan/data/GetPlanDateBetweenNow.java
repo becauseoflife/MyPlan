@@ -83,8 +83,7 @@ public class GetPlanDateBetweenNow {
 
     // 获取日期的字符串
     @SuppressLint("DefaultLocale")
-    public String getDateStr()
-    {
+    public String getDateStr() {
         String dateStr = plan.getYear() + "年" + plan.getMonth() + "月" + plan.getDay() + "日";
         // 如果设置了时间则显示时间
         if (plan.getHour() >= 0)

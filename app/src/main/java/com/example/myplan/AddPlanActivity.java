@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.myplan.data.model.Plan;
+import com.example.myplan.data.model.ThemeColor;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
@@ -44,24 +46,28 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     private Plan plan;
 
     private Toolbar toolbar;
+    private RelativeLayout inputLayout;
     private ListView menuListView;
     private EditText titleExitText;
     private EditText remarksExitText;
     private SimpleAdapter menuAdapter;
     private List<Map<String, Object>> menuList = new ArrayList<Map<String, Object>>();
+
+    private ThemeColor myThemeColor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_plan);
 
-        toolbar = findViewById(R.id.add_plan_toolBar);
-        titleExitText = findViewById(R.id.add_plan_title_editText);
-        remarksExitText = findViewById(R.id.add_plan_remarks_editText);
-        menuListView = findViewById(R.id.add_plan_menu_listView);
+        toolbar = findViewById(R.id.add_plan_toolBar);                  // 新增界面工具栏
+        inputLayout = findViewById(R.id.add_plan_bgimage);              // 新增界面输入框架
+        titleExitText = findViewById(R.id.add_plan_title_editText);     // 新增界面标题输入框
+        remarksExitText = findViewById(R.id.add_plan_remarks_editText); // 新增界面备注输入框
+        menuListView = findViewById(R.id.add_plan_menu_listView);       // 新增界面输入菜单列表
 
-        // 初始化Plan数据
+        // 初始化Plan数据和主题颜色
         InitPlan();
-
+        InitTheme();
         // 工具栏返回图标的监听事件
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +93,15 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
         // listView菜单点击事件
         menuListView.setOnItemClickListener(new MenuItemClick());
 
+    }
+
+    // 初始化主题颜色
+    private void InitTheme() {
+        myThemeColor = (ThemeColor) getIntent().getSerializableExtra("my_theme_color");
+        if (myThemeColor != null){
+            toolbar.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
+            inputLayout.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
+        }
     }
 
     // 初始化Plan数据

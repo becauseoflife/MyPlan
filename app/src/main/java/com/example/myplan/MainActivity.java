@@ -8,14 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.fragment.app.FragmentTransitionImpl;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,8 +34,10 @@ import com.example.myplan.data.FileDataSource;
 import com.example.myplan.data.GetPlanDateBetweenNow;
 import com.example.myplan.data.model.Plan;
 import com.example.myplan.data.PlanFragmentPagerAdapter;
+import com.example.myplan.data.model.ThemeColor;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.rtugeek.android.colorseekbar.ColorSeekBar;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -59,55 +61,58 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout homeViewPoints;    // 主页导航小圆点控件
     private ListView homePlanListView;          // 主页Plan列表控件
     private FloatingActionButton homeFABtn; // 主页悬浮按钮控件
-    private ArrayList<Plan> myPlan;
     private PlansArrayAdapter thePlansListAdapter;
     private PlanFragmentPagerAdapter thePlansPagerAdapter;
     private ArrayList<Fragment> planFragmentList;
 
+    private ArrayList<Plan> myPlan;
+    private ThemeColor myThemeColor;
+    private int themeColor;
     private FileDataSource fileDataSource;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 加载数据
+        homePlanViewPager = findViewById(R.id.home_viewPager);      // 主页轮播plan
+        homeViewPoints = findViewById(R.id.home_select_points);     // 主页轮播plan导航小圆点
+        homePlanListView = findViewById(R.id.home_listView);        // 主页plan列表
+        homeFABtn = findViewById(R.id.home_add_btn);                // 主页新增按钮
+        toolbar = findViewById(R.id.main_toolBar);                  // 主页工具栏
+        drawerLayout = findViewById(R.id.main_drawer_layout);       // 主页菜单侧滑抽屉
+        navigationView = findViewById(R.id.main_navigationView);    // 主页菜单侧滑抽屉内容
+
+        // 加载数据和主题
         initData();
 
         // 显示倒计时轮播图
         thePlansPagerAdapter = new PlanFragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_SET_USER_VISIBLE_HINT);
         planFragmentList = InitPlanFragment();
         thePlansPagerAdapter.setFragmentList(planFragmentList);
-
-        homePlanViewPager = findViewById(R.id.home_viewPager);
         homePlanViewPager.setAdapter(thePlansPagerAdapter);
 
         // 轮播图的小圆点
-        homeViewPoints = findViewById(R.id.home_select_points);
         setPoints();
         // 页面改变时改变导航小圆点的监听事件
        homePlanViewPager.addOnPageChangeListener(new myOnPageChangeListener());
 
         // 显示倒计时列表菜单
         thePlansListAdapter = new PlansArrayAdapter(this, R.layout.main_list_item_plan, myPlan);
-        homePlanListView = findViewById(R.id.home_listView);
         homePlanListView.setAdapter(thePlansListAdapter);
         homePlanListView.setOnItemClickListener(new PlanItemClickListener());
 
         // 点击新建的悬浮按钮
-        homeFABtn = findViewById(R.id.home_add_btn);
         homeFABtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent NewPlanIntent = new Intent(MainActivity.this, AddPlanActivity.class);
                 NewPlanIntent.putExtra("create_new_plan",true);
+                NewPlanIntent.putExtra("my_theme_color", myThemeColor);
                 startActivityForResult(NewPlanIntent, REQUEST_CODE_ADD_NEW_PLAN);
             }
         });
 
         // 侧滑菜单
-        toolbar = findViewById(R.id.main_toolBar);
-        drawerLayout = findViewById(R.id.main_drawer_layout);
-        navigationView = findViewById(R.id.main_navigationView);
         navigationView.setItemIconTintList(null);   // 显示原本的图片
         navigationHeadView = navigationView.getHeaderView(0);   // 获取头布局
 
@@ -138,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Fragment> InitPlanFragment() {
         planFragmentList = new ArrayList<>();
         for (int i=0; i<myPlan.size(); i++){
-            planFragmentList.add(new ViewPlanFragment(myPlan.get(i), i));
+            planFragmentList.add(new ViewPlanFragment(myPlan.get(i), i, myThemeColor));
         }
         return planFragmentList;
     }
@@ -161,10 +166,7 @@ public class MainActivity extends AppCompatActivity {
                     thePlansPagerAdapter.setFragmentList(planFragmentList);
                     thePlansPagerAdapter.notifyDataSetChanged();
                     // 添加一个导航小圆点
-                    if (myPlan.size() == 2)
-                        setPoints();
-                    if (myPlan.size() > 2)
-                        addPoint();
+                    addPoint();
 
                     Toast.makeText(MainActivity.this, "新建成功", Toast.LENGTH_SHORT).show();
                 }
@@ -183,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
                         thePlansPagerAdapter.notifyDataSetChanged();
                         // 删除一个导航小圆点
                         homeViewPoints.removeViewAt(deletePlanPosition);
+                        if (myPlan.size() == 1)
+                            homeViewPoints.getChildAt(0).setVisibility(View.GONE);
 
                         Toast.makeText(MainActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
                     }
@@ -227,22 +231,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 添加小圆点
     private void addPoint() {
         View view = new View(MainActivity.this);
         view.setBackgroundResource(R.drawable.point_selector);
-        view.setEnabled(false);
+        // 只有一个时隐藏
+        if (myPlan.size() == 1) {
+            view.setEnabled(true);
+            view.setVisibility(View.GONE);
+        }
+        // 当列表大于一个时显示，并显示第一个圆点
+        else if(myPlan.size() > 1) {
+            homeViewPoints.getChildAt(0).setVisibility(View.VISIBLE);
+            view.setEnabled(false);
+        }
         // 设置宽高
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(20, 20);
         // 设置间隔
         layoutParams.leftMargin = 13;
         // 添加到LinearLayout中
         homeViewPoints.addView(view, layoutParams);
+
     }
 
-    // 初始化数据
+    // 初始化数据和主题颜色
     private void initData() {
         fileDataSource = new FileDataSource(this);
         myPlan = fileDataSource.load();
+        myThemeColor = fileDataSource.loadTheme();
+        if (myThemeColor.getMyColorPrimaryDark() != 0){
+            toolbar.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
+            homeFABtn.setBackgroundTintList(ColorStateList.valueOf(myThemeColor.getMyColorPrimaryDark()));
+        }
+
 /*        if (myPlan.size() == 0){
             ArrayList<String> label = new ArrayList<>();
             myPlan.add(new Plan("标题1","备注1",R.drawable.test4,label,"",2025,12,11,9,50,15, "周四"));
@@ -253,9 +274,10 @@ public class MainActivity extends AppCompatActivity {
     }
     // 销毁时保存plan
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         fileDataSource.save();
+        fileDataSource.saveTheme();
     }
 
     // 主页显示item适配器
@@ -343,6 +365,7 @@ public class MainActivity extends AppCompatActivity {
             Intent editorIntent = new Intent(MainActivity.this, EditorActivity.class);
             editorIntent.putExtra("editor_plan", myPlan.get(position));
             editorIntent.putExtra("editor_plan_position", position);
+            editorIntent.putExtra("my_theme_color", myThemeColor);
             startActivityForResult(editorIntent, REQUEST_CODE_EDITOR_PLAN);
         }
     }
@@ -352,6 +375,42 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+            switch (menuItem.getItemId()){
+                case R.id.theme_color_menu:
+                    LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.color_slider_layout, null);
+                    ColorSeekBar colorSeekBar =  layout.findViewById(R.id.colorSlider);
+
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                    dialog.setTitle("选择颜色").setView(layout);
+                    // 滑动时动态改变颜色
+                    colorSeekBar.setColor(myThemeColor.getMyColorPrimaryDark());
+                    colorSeekBar.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
+                        @Override
+                        public void onColorChangeListener(int colorBarPosition, int alphaBarPosition, int color) {
+                            toolbar.setBackgroundColor(color);
+                            homeFABtn.setBackgroundTintList(ColorStateList.valueOf(color));
+                            themeColor = color;
+                        }
+                    });
+                    // 点击取消时，恢复原来颜色
+                    dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            toolbar.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
+                            homeFABtn.setBackgroundTintList(ColorStateList.valueOf(myThemeColor.getMyColorPrimaryDark()));
+                        }
+                    });
+                    // 点击确认，设置颜色并保存
+                    dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            myThemeColor.setMyColorPrimaryDark(themeColor);
+                        }
+                    });
+                    dialog.create().show();
+                    break;
+            }
+
             drawerLayout.closeDrawers();
             return true;
         }

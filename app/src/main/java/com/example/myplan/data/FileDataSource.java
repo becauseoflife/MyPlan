@@ -3,6 +3,7 @@ package com.example.myplan.data;
 import android.content.Context;
 
 import com.example.myplan.data.model.Plan;
+import com.example.myplan.data.model.ThemeColor;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 public class FileDataSource {
     private Context context;
     private ArrayList<Plan> plans = new ArrayList<>();
+
+    private ThemeColor myThemeColor = new ThemeColor();
 
     public FileDataSource(Context context) {
         this.context = context;
@@ -46,4 +49,32 @@ public class FileDataSource {
         }
         return plans;
     }
+
+    public void saveTheme()
+    {
+        try {
+            ObjectOutputStream outputStream = new ObjectOutputStream(
+                    context.openFileOutput("myThemeColor.txt", Context.MODE_PRIVATE)
+            );
+            outputStream.writeObject(myThemeColor);
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ThemeColor loadTheme()
+    {
+        try{
+            ObjectInputStream inputStream = new ObjectInputStream(
+                    context.openFileInput("myThemeColor.txt")
+            );
+            myThemeColor = (ThemeColor) inputStream.readObject();
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return myThemeColor;
+    }
+
 }

@@ -13,7 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimaryDark"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/add_plan_back"
+        app:navigationIcon="@drawable/button_back"
         app:titleTextColor="@android:color/white"
         tools:ignore="MissingConstraints"
         app:menu="@menu/editor_toolbar_menu"
@@ -23,8 +23,8 @@
         android:id="@+id/editor_bkg_frame"
         android:layout_width="match_parent"
         android:layout_height="320dp"
-        android:layout_below="@+id/editor_menu_toolBar"
         android:background="@drawable/test"
+        android:layout_below="@+id/editor_menu_toolBar"
         android:scaleType="fitXY"
         >
 

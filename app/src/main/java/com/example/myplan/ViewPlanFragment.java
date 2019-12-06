@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.myplan.data.GetPlanDateBetweenNow;
 import com.example.myplan.data.model.Plan;
+import com.example.myplan.data.model.ThemeColor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,10 +38,12 @@ public class ViewPlanFragment extends Fragment {
     private static final int REQUEST_CODE_EDITOR_PLAN = 902;
     private int planPosition;
     private Plan plan;
-    public ViewPlanFragment(Plan plan, int position) {
+    private ThemeColor themeColor;
+    public ViewPlanFragment(Plan plan, int position, ThemeColor themeColor) {
         // Required empty public constructor
         this.plan = plan;
         this.planPosition = position;
+        this.themeColor = themeColor;
     }
 
     @SuppressLint("DefaultLocale")
@@ -98,6 +101,7 @@ public class ViewPlanFragment extends Fragment {
                 Intent editorIntent = new Intent(getContext(), EditorActivity.class);
                 editorIntent.putExtra("editor_plan", plan);
                 editorIntent.putExtra("editor_plan_position", planPosition);
+                editorIntent.putExtra("my_theme_color", themeColor);
                 Objects.requireNonNull(getActivity()).startActivityForResult(editorIntent, REQUEST_CODE_EDITOR_PLAN);
             }
         });

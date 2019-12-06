@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.myplan.data.GetPlanDateBetweenNow;
 import com.example.myplan.data.model.Plan;
+import com.example.myplan.data.model.ThemeColor;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class EditorActivity extends AppCompatActivity {
     private FrameLayout bkgFrameLayout;
     private List<Map<String, Object>> menuList = new ArrayList<Map<String, Object>>();
     private Plan plan;
+    private ThemeColor themeColor;
     private int planPosition;
     private CountDownTimer timer;   // 倒计时
     @Override
@@ -46,13 +48,17 @@ public class EditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        bkgFrameLayout = findViewById(R.id.editor_bkg_frame);
-        editorTitle = findViewById(R.id.editor_bkg_title_textView);
-        editorDate = findViewById(R.id.editor_bkg_date_textView);
-        editorCountDown = findViewById(R.id.editor_count_down_textView);
+        editorToolBar = findViewById(R.id.editor_menu_toolBar);             // 修改界面工具栏
+        listViewSettingMenu = findViewById(R.id.editor_set_menu_listView);  // 修改界面菜单列表
+        bkgFrameLayout = findViewById(R.id.editor_bkg_frame);               // 修改界面plan背景框架
+        editorTitle = findViewById(R.id.editor_bkg_title_textView);         // 修改界面plan标题
+        editorDate = findViewById(R.id.editor_bkg_date_textView);           // 修改界面plan日期
+        editorCountDown = findViewById(R.id.editor_count_down_textView);    // 修改界面plan倒计时
+
+        // 初始化主题颜色
+        InitTheme();
 
         // toolBar工具栏
-        editorToolBar = findViewById(R.id.editor_menu_toolBar);
         editorToolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,7 +73,6 @@ public class EditorActivity extends AppCompatActivity {
         editorToolBar.setOnMenuItemClickListener(new MyMenuClickListener());
 
         // 菜单选项和页面
-        listViewSettingMenu = findViewById(R.id.editor_set_menu_listView);
         menuList = InitMenuList();
         SimpleAdapter menuAdapter = new SimpleAdapter(
                 this,
@@ -88,6 +93,12 @@ public class EditorActivity extends AppCompatActivity {
 
         editorCountDown.setOnClickListener(new ChangeFormatOnClickListener());
 
+    }
+
+    private void InitTheme() {
+        themeColor = (ThemeColor) getIntent().getSerializableExtra("my_theme_color");
+        if (themeColor != null)
+            editorToolBar.setBackgroundColor(themeColor.getMyColorPrimaryDark());
     }
 
     // 编辑界面plan的显示
