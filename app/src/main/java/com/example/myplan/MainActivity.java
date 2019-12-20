@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
         fileDataSource = new FileDataSource(this);
         myPlan = fileDataSource.load();
         myThemeColor = fileDataSource.loadTheme();
-        if (myThemeColor.getMyColorPrimaryDark() != 0){
+        if (myThemeColor.getMyColorPrimaryDark() != -1){
             toolbar.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
             homeFABtn.setBackgroundTintList(ColorStateList.valueOf(myThemeColor.getMyColorPrimaryDark()));
         }
@@ -383,7 +383,10 @@ public class MainActivity extends AppCompatActivity {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
                     dialog.setTitle("选择颜色").setView(layout);
                     // 滑动时动态改变颜色
-                    colorSeekBar.setColor(myThemeColor.getMyColorPrimaryDark());
+                    if (myThemeColor.getMyColorPrimaryDark() != -1)
+                        colorSeekBar.setColor(myThemeColor.getMyColorPrimaryDark());
+                    else
+                        colorSeekBar.setColor(getResources().getColor(R.color.colorPrimaryDark));
                     colorSeekBar.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
                         @Override
                         public void onColorChangeListener(int colorBarPosition, int alphaBarPosition, int color) {
@@ -396,8 +399,13 @@ public class MainActivity extends AppCompatActivity {
                     dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            toolbar.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
-                            homeFABtn.setBackgroundTintList(ColorStateList.valueOf(myThemeColor.getMyColorPrimaryDark()));
+                            if (myThemeColor.getMyColorPrimaryDark() != -1) {
+                                toolbar.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
+                                homeFABtn.setBackgroundTintList(ColorStateList.valueOf(myThemeColor.getMyColorPrimaryDark()));
+                            }else {
+                                toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                                homeFABtn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
+                            }
                         }
                     });
                     // 点击确认，设置颜色并保存

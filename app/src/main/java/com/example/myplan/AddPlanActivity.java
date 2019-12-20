@@ -1,14 +1,19 @@
 package com.example.myplan;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -98,7 +103,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
     // 初始化主题颜色
     private void InitTheme() {
         myThemeColor = (ThemeColor) getIntent().getSerializableExtra("my_theme_color");
-        if (myThemeColor != null){
+        if (myThemeColor != null && myThemeColor.getMyColorPrimaryDark() != -1){
             toolbar.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
             inputLayout.setBackgroundColor(myThemeColor.getMyColorPrimaryDark());
         }
@@ -284,6 +289,7 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
                 }
                 // 选择背景图片
                 case MENU_SELECT_IMG:{
+                    showDialogSelectImage();
                     Toast.makeText(AddPlanActivity.this, "选择图片", Toast.LENGTH_SHORT).show();
                     break;
                 }
@@ -295,6 +301,32 @@ public class AddPlanActivity extends AppCompatActivity implements DatePickerDial
                 }
             }
         }
+    }
+
+    // 显示选择图片的方式的界面
+    private void showDialogSelectImage() {
+
+        AlertDialog.Builder selectDialog = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.editor_select_image_menu, null);
+        selectDialog.setView(view);
+        //selectDialog.create().show();
+
+        Dialog dialog = new Dialog(this,R.style.AppTheme);
+        dialog.setContentView(view);
+        dialog.setCancelable(true);
+        Window window = dialog.getWindow();
+        window.setLayout(WindowManager.LayoutParams.FILL_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.BOTTOM);
+        dialog.show();
+
+        // 取消按钮
+        Button cancelBtn = view.findViewById(R.id.cancel_button);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
     }
 
     //  显示日期选择界面

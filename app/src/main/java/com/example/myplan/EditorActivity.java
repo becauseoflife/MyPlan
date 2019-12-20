@@ -97,7 +97,7 @@ public class EditorActivity extends AppCompatActivity {
 
     private void InitTheme() {
         themeColor = (ThemeColor) getIntent().getSerializableExtra("my_theme_color");
-        if (themeColor != null)
+        if (themeColor.getMyColorPrimaryDark() != -1)
             editorToolBar.setBackgroundColor(themeColor.getMyColorPrimaryDark());
     }
 
@@ -133,7 +133,7 @@ public class EditorActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                editorCountDown.setText("顺计时未实现");
+                editorCountDown.setText("已结束");
             }
         };
         timer.start();
@@ -159,7 +159,7 @@ public class EditorActivity extends AppCompatActivity {
         }
     }
 
-    // 左滑菜单里面的内容
+    // 菜单列表的内容
     private List<Map<String, Object>> InitMenuList() {
 
         // 日期

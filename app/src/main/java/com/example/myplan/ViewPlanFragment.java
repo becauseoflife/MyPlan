@@ -90,7 +90,7 @@ public class ViewPlanFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                countDownTextView.setText("顺计时未实现");
+                countDownTextView.setText("已结束");
             }
         };
         timer.start();
