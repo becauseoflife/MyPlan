@@ -415,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
                             myThemeColor.setMyColorPrimaryDark(themeColor);
                         }
                     });
-                    dialog.create().show();
+                    dialog.setCancelable(false).create().show();
                     break;
             }
 
